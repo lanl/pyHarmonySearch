@@ -87,13 +87,10 @@ def initialize():
 
 def random_selection(solution_vector, i):
 	"""
-		If variable, the next note is randomly selected from the bounds. If it's not variable, it arbitrarily gets assigned as
-		the mean of the lower and upper bounds.
+		Choose a note according to get_value(). Remember that even if a note is not variable, get_value() must still
+		return a valid value.
 	"""
-	if(obj_fun.is_variable(i)):
-		solution_vector.append(random.uniform(obj_fun.lower_bound(i), obj_fun.upper_bound(i)))
-	else:
-		solution_vector.append((obj_fun.lower_bound(i) + obj_fun.upper_bound(i)) / 2.0)
+	solution_vector.append(obj_fun.get_value(i))
 
 def memory_consideration(solution_vector, i):
 	"""

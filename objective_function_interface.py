@@ -37,6 +37,20 @@ class ObjectiveFunctionInterface(object):
 			-76
 		"""
 		raise NotImplementedError
+
+	def get_value(self, i):
+		"""
+			Get a valid value of parameter i. You can return values any way you like - uniformly at random, according to some
+			distribution, etc.
+
+			For example, suppose the x parameter in fitness() varies uniformly at random in the range [-1000, 1000]:
+
+			>>> print obj_fun.get_value(0)
+			763.406542555
+			>>> print obj_fun.get_value(0)
+			-80.8100680841
+		"""
+		raise NotImplementedError
 	
 	def lower_bound(self, i):
 		"""
@@ -67,7 +81,8 @@ class ObjectiveFunctionInterface(object):
 			>>> print obj_fun.is_variable(1)
 			False
 
-			Currently, if a parameter is not variable, it will be fixed at the bound mean: ((lower_bound + upper_bound) / 2).
+			Note that if a parameter is not variable, it should still return a valid value in get_value(). This value can be constant,
+			but a valid value must be returned.
 		"""
 		raise NotImplementedError
 

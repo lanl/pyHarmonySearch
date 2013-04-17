@@ -27,6 +27,8 @@ The output is the solution `(3.9862)` appended to the solution vector `[0.0167, 
 
 Note that like many similar optimization algorithms, HS is stochastic in nature. Thus, you will get a slightly different result every time you run it.
 
+This HS implementation only works on continuous variables (e.g., x is in the range `[-5, 5]`). It may be possible to allow for discrete variables (e.g., x is chosen from the set `(3, 4, 6, 8, 9)`), but the pitch adjustment step will need to be modified.
+
 The structure of the code is simple. There are three components:
 		
 * harmony_search.py - The Python code that implements the HS algorithm.
@@ -61,7 +63,3 @@ Python optimization packages that implement HS:
 * [PyGMO](http://pagmo.sourceforge.net/pygmo/)
 
 pyHarmonySearch differs from other optimization packages in that it relies on no 3rd party software. It is simple and easy-to-use standalone Python code. The primary reason I developed this was because I got tired of trying to compile and maintain my own 3rd party packages. SciPy is particularly nasty to install from scratch without root access on a machine running several-year-old software, and many scientific packages rely on it. I skirted this issue by implementing HS myself from scratch.
-
-## VERSION HISTORY
-v1.0 - 4/17/13
-* initial release

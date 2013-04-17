@@ -23,11 +23,13 @@
 
 from objective_function_interface import ObjectiveFunctionInterface
 from math import pow
+import random
 
 class ObjectiveFunction(ObjectiveFunctionInterface):
-	lower_bounds = [-1000, -1000]
-	upper_bounds = [1000, 1000]
-	variable = [True, True]
+	def __init__(self):
+		self.lower_bounds = [-1000, -1000]
+		self.upper_bounds = [1000, 1000]
+		self.variable = [True, True]
 
 	def fitness(self, vector):
 		"""
@@ -35,7 +37,13 @@ class ObjectiveFunction(ObjectiveFunctionInterface):
 			The maximum is 4 at (0, -1).
 		"""
 		return -(pow(vector[0], 2) + pow(vector[1] + 1, 2)) + 4
-	
+
+	def get_value(self, i):
+		"""
+			Values are returned uniformly at random in their entire range.
+		"""
+		return random.uniform(self.lower_bounds[i], self.upper_bounds[i])
+
 	def lower_bound(self, i):
 		return self.lower_bounds[i]
 	
