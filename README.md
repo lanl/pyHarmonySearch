@@ -10,7 +10,7 @@ Geoffrey Fairchild
 This software is licensed under the [BSD 3-Clause License](http://opensource.org/licenses/BSD-3-Clause). Please refer to the separate LICENSE.txt file for the exact text of the license. You are obligated to give attribution if you use this code.
 
 ## ABOUT
-pyHarmonySearch implements the harmony search (HS) global optimization algorithm in Python. HS is a metaheuristic search algorithm which, similar to simulated annealing, tabu, and evolutionary searches, is based on real world phenomena. Specifically, HS mimics a jazz band improvising together. Courtesy [Wikipedia](http://en.wikipedia.org/wiki/Harmony_search):
+pyHarmonySearch implements the harmony search (HS) global optimization algorithm in Python. HS is a metaheuristic search algorithm that, similar to simulated annealing, tabu, and evolutionary searches, is based on real world phenomena. Specifically, HS mimics a jazz band improvising together. Courtesy [Wikipedia](http://en.wikipedia.org/wiki/Harmony_search):
 
 > In the HS algorithm, each musician (= decision variable) plays (= generates) a note (= a value) for finding a best harmony (= global optimum) all together.
 
@@ -23,7 +23,7 @@ To run the sample code, simply type the following:
 	> python harmony_search.py
 	[0.01672298894632301, -1.116479132293307] 3.9861529533808993
 	
-The output is the solution `(3.9862)` appended to the solution vector `(0.0167, -1.1165)`.
+The output is the solution `(3.9862)` appended to the solution vector `[0.0167, -1.1165]`.
 
 Note that like many similar optimization algorithms, HS is stochastic in nature. Thus, you will get a slightly different result every time you run it.
 
