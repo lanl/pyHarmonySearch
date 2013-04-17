@@ -63,5 +63,5 @@ Python optimization packages which implement HS:
 pyHarmonySearch differs from other optimization packages in that it relies on no 3rd party software. It is simple and easy-to-use standalone Python code. The primary reason I developed this was because I got tired of trying to compile and maintain my own 3rd party packages. SciPy is particularly nasty to install from scratch without root access on a machine running several-year-old software, and many scientific packages rely on it. I skirted this issue by implementing HS myself from scratch.
 
 ## VERSION HISTORY
-v1.0 - 3/15/13
+v1.0 - 4/17/13
 * initial release
