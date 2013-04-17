@@ -29,8 +29,8 @@ Note that like many similar optimization algorithms, HS is stochastic in nature.
 
 The structure of the code is simple. There are three components:
 		
-* harmony_search.py - The Python code which implements the HS algorithm.
-* objective_function_interface.py - The "interface" which you need to implement which defines the objective function.
+* harmony_search.py - The Python code that implements the HS algorithm.
+* objective_function_interface.py - The "interface" that you need to implement that defines the objective function.
 * test_objective_function.py - Example objective function implementation. This test objective function maximizes the function `(-(x^2 + (y+1)^2) + 4)`. The answer is `4` at the point `(0, -1)`.
 
 In general, you will make use of this code in three steps:
@@ -55,7 +55,7 @@ Some modifications and improvements have been suggested to the original algorith
 * M. G. H. Omran and M. Mahdavi, "Global-best harmony search", Applied Mathematics and Computation, vol. 198, no. 2, pp. 643-656, May 2008.
 
 ## DIFFERENCES
-Python optimization packages which implement HS:
+Python optimization packages that implement HS:
 
 * [pyOpt](http://www.pyopt.org/)
 * [PyGMO](http://pagmo.sourceforge.net/pygmo/)
