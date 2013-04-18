@@ -15,31 +15,33 @@ pyHarmonySearch implements the harmony search (HS) global optimization algorithm
 > In the HS algorithm, each musician (= decision variable) plays (= generates) a note (= a value) for finding a best harmony (= global optimum) all together.
 
 ## REQUIREMENTS
-This code does not rely on any 3rd party software. It only requires Python 2.7 or higher.
+This code does not rely on any 3rd party software. It only requires Python 2.7 or higher. It's likely that it runs on earlier versions of Python and Python 3 via 2to3, but I haven't tested it.
 
 ## USING THIS CODE
 To run the sample code, simply type the following:
 
-	> python harmony_search.py
+	> python harmony_search.py test_continuous_params
 	[0.01672298894632301, -1.116479132293307] 3.9861529533808993
+	> python harmony_search.py test_discrete_params
+	[0, -0.999840357461153] 3.99999997451
 	
 The output is the solution `(3.9862)` appended to the solution vector `[0.0167, -1.1165]`.
 
 Note that like many similar optimization algorithms, HS is stochastic in nature. Thus, you will get a slightly different result every time you run it.
 
-This HS implementation only works on continuous variables (e.g., x is in the range `[-5, 5]`). It may be possible to allow for discrete variables (e.g., x is chosen from the set `(3, 4, 6, 8, 9)`), but the pitch adjustment step will need to be modified.
+This HS implementation allows both continuous variables (e.g., x is in the range `[-5, 5]`) and discrete variables (e.g., x is chosen from the set `(3, 4, 6, 8, 9)`).
 
-The structure of the code is simple. There are three components:
+The structure of the code is simple. There are four components:
 		
 * harmony_search.py - The Python code that implements the HS algorithm.
 * objective_function_interface.py - The "interface" that you need to implement that defines the objective function.
-* test_objective_function.py - Example objective function implementation. This test objective function maximizes the function `(-(x^2 + (y+1)^2) + 4)`. The answer is `4` at the point `(0, -1)`.
+* test_continuous_params.py - Example objective function implementation where both variables are continuous. The test objective function maximizes the function `(-(x^2 + (y+1)^2) + 4)`. The answer is `4` at the point `(0, -1)`.
+* test_discrete_params.py - Example objective function identical to test_continuous_params.py, only parameter x is discrete and y is continuous.
 
-In general, you will make use of this code in three steps:
+In general, you will make use of this code in two steps:
 
-1. Implement your own objective function (inheriting from `ObjectiveFunctionInterface`).
-1. Ensure that harmony_search.py calls your objective function. This occurs where `obj_fun` is assigned above `main()`.
-1. Tune the various input parameters in harmony_search.py. These are problem-specific, and the defaults might not be appropriate for your problem.
+1. Implement your own params file, complete with objective function inheriting from `ObjectiveFunctionInterface`.
+1. Tune the various input parameters (e.g., hms, hmcr). These are problem-specific, and the numbers I used in the two example implementations might not be appropriate for your problem.
 
 More documentation is provided in harmony_search.py and objective_function_interface.py.
 

@@ -25,7 +25,28 @@ from objective_function_interface import ObjectiveFunctionInterface
 from math import pow
 import random
 
+#define all input parameters
+maximize = True #do we maximize or minimize?
+max_imp = 50000 #maximum number of improvisations
+hms = 100 #harmony memory size
+hmcr = 0.75 #harmony memory considering rate
+par = 0.5 #pitch adjusting rate
+mpap = 0.25 #maximum pitch adjustment proportion (new parameter defined in pitch_adjustment()) - used for continuous variables only
+mpai = 2 #maximum pitch adjustment index (also defined in pitch_adjustment()) - used for discrete variables only
+
 class ObjectiveFunction(ObjectiveFunctionInterface):
+	"""
+		This is a toy objective function that contains only continuous variables.
+
+		Goal:
+
+			maximize -(x^2 + (y+1)^2) + 4
+			The maximum is 4 at (0, -1).
+
+		Note that since all variables are continuous, we don't actually need to implement get_index()
+		and get_num_discrete_values().
+	"""
+
 	def __init__(self):
 		self.lower_bounds = [-1000, -1000]
 		self.upper_bounds = [1000, 1000]
@@ -38,9 +59,11 @@ class ObjectiveFunction(ObjectiveFunctionInterface):
 		"""
 		return -(pow(vector[0], 2) + pow(vector[1] + 1, 2)) + 4
 
-	def get_value(self, i):
+	def get_value(self, i, index=None):
 		"""
 			Values are returned uniformly at random in their entire range.
+
+			Since both parameters are continuous, index can be ignored.
 		"""
 		return random.uniform(self.lower_bounds[i], self.upper_bounds[i])
 
@@ -53,5 +76,9 @@ class ObjectiveFunction(ObjectiveFunctionInterface):
 	def is_variable(self, i):
 		return self.variable[i]
 	
-	def num_parameters(self):
+	def is_discrete(self, i):
+		#all variables are continuous
+		return False
+	
+	def get_num_parameters(self):
 		return len(self.lower_bounds)

@@ -22,21 +22,19 @@
 """
 
 import random
-from test_objective_function import ObjectiveFunction
+import argparse
 
-#define all input parameters
-maximize = True #do we maximize or minimize?
-max_imp = 50000 #maximum number of improvisations
-hms = 100 #harmony memory size
-hmcr = 0.75 #harmony memory considering rate
-par = 0.5 #pitch adjusting rate
-mpap = 0.25 #maximum pitch adjustment proportion (new parameter defined in pitch_adjustment())
+argparser = argparse.ArgumentParser(description='Run harmony search on the specified object in the specified module.')
+argparser.add_argument('module_name', type=str, help='name of module that contains the object to import')
+args = argparser.parse_args()
+
+#dynamically import the parameters and objective function class from the arguments
+params = __import__(args.module_name)
+obj_fun_class = getattr(params, 'ObjectiveFunction')
+obj_fun = obj_fun_class()
 
 #harmony_memory stores the best hms harmonies
 harmony_memory = list()
-
-#make sure your objective function class gets instantiated here
-obj_fun = ObjectiveFunction()
 
 def main():
 	"""
@@ -47,13 +45,13 @@ def main():
 
 	#create max_imp improvisations
 	num_imp = 0
-	while(num_imp < max_imp):
+	while(num_imp < params.max_imp):
 		#generate new harmony
 		solution_vector = list()
-		for i in range(0, obj_fun.num_parameters()):
-			if random.random() < hmcr:
+		for i in range(0, obj_fun.get_num_parameters()):
+			if random.random() < params.hmcr:
 				memory_consideration(solution_vector, i)
-				if random.random() < par:
+				if random.random() < params.par:
 					pitch_adjustment(solution_vector, i)
 			else:
 				random_selection(solution_vector, i)
@@ -65,12 +63,12 @@ def main():
 	
 	#print out best harmony
 	best_index = None
-	best_fitness = float('-inf') if maximize else float('+inf')
+	best_fitness = float('-inf') if params.maximize else float('+inf')
 	for i, harmony in enumerate(harmony_memory):
-		if (maximize and harmony[-1] > best_fitness) or (not maximize and harmony[-1] < best_fitness):
+		if (params.maximize and harmony[-1] > best_fitness) or (not params.maximize and harmony[-1] < best_fitness):
 			best_index = i
 			best_fitness = harmony[-1]
-	print harmony_memory[best_index][:-1], harmony_memory[best_index][-1]
+	print harmony_memory[best_index][:-1], best_fitness
 
 def initialize():
 	"""
@@ -78,9 +76,9 @@ def initialize():
 		that we aren't actually doing any matrix operations, so a library like NumPy isn't necessary here. The matrix
 		merely stores previous harmonies.
 	"""
-	for i in range(0, hms):
+	for i in range(0, params.hms):
 		solution_vector = list()
-		for j in range(0, obj_fun.num_parameters()):
+		for j in range(0, obj_fun.get_num_parameters()):
 			random_selection(solution_vector, j)
 		solution_vector.append(obj_fun.fitness(solution_vector))
 		harmony_memory.append(solution_vector)
@@ -96,29 +94,39 @@ def memory_consideration(solution_vector, i):
 	"""
 		Randomly choose a note previously played.
 	"""
-	memory_index = random.randint(0, hms - 1)
+	memory_index = random.randint(0, params.hms - 1)
 	solution_vector.append(harmony_memory[memory_index][i])
 
 def pitch_adjustment(solution_vector, i):
 	"""
-		If variable, randomly adjust the pitch up or down by some amount. The amount is defined as:
+		If variable, randomly adjust the pitch up or down by some amount. This is the only place in the algorithm where there
+		is an explicit difference between continuous and discrete variables.
 
-		(upper_bound - current_value) * rand() * mpap
-			or
-		(current_value - lower_bound) * rand() * mpap
-
-		The probability of adjusting the pitch either up or down is fixed at 0.5. The maximum pitch adjustment proportion
-		determines the maximum amount the pitch may change. For example, suppose that it is decided via coin flip that
-		the pitch will be adjusted down. Also suppose that mpap is set to 0.25. This means that the maximum value the pitch
-		can be dropped will be 25% of the difference between the lower bound and the current pitch.
+		The probability of adjusting the pitch either up or down is fixed at 0.5. The maximum pitch adjustment proportion (mpap)
+		and maximum pitch adjustment index (mpai) determine the maximum amount the pitch may change for continuous and discrete
+		variables, respectively. For example, suppose that it is decided via coin flip that the pitch will be adjusted down.
+		Also suppose that mpap is set to 0.25. This means that the maximum value the pitch can be dropped will be 25% of the
+		difference between the lower bound and the current pitch. mpai functions similarly, only it relies on indices of the possible
+		values instead.
 	"""
 	if(obj_fun.is_variable(i)):
-		if random.random() < 0.5:
-			#adjust pitch down
-			solution_vector[i] = (solution_vector[i] - obj_fun.lower_bound(i)) * random.random() * mpap
+		if obj_fun.is_discrete(i):
+			current_index = obj_fun.get_index(i, solution_vector[i])
+			#discrete variable
+			if random.random() < 0.5:
+				#adjust pitch down
+				solution_vector[i] = obj_fun.get_value(i, current_index - random.randint(0, min(params.mpai, current_index)))
+			else:
+				#adjust pitch up
+				solution_vector[i] = obj_fun.get_value(i, current_index + random.randint(0, min(params.mpai, obj_fun.get_num_discrete_values(i) - current_index - 1)))
 		else:
-			#adjust pitch up
-			solution_vector[i] = (obj_fun.upper_bound(i) - solution_vector[i]) * random.random() * mpap
+			#continuous variable
+			if random.random() < 0.5:
+				#adjust pitch down
+				solution_vector[i] = (solution_vector[i] - obj_fun.lower_bound(i)) * random.random() * params.mpap
+			else:
+				#adjust pitch up
+				solution_vector[i] = (obj_fun.upper_bound(i) - solution_vector[i]) * random.random() * params.mpap
 	
 def update_harmony_memory(solution_vector):
 	"""
@@ -127,12 +135,12 @@ def update_harmony_memory(solution_vector):
 	"""
 	if solution_vector not in harmony_memory:
 		worst_index = None
-		worst_fitness = float('+inf') if maximize else float('-inf')
+		worst_fitness = float('+inf') if params.maximize else float('-inf')
 		for i, harmony in enumerate(harmony_memory):
-			if (maximize and harmony[-1] < worst_fitness) or (not maximize and harmony[-1] > worst_fitness):
+			if (params.maximize and harmony[-1] < worst_fitness) or (not params.maximize and harmony[-1] > worst_fitness):
 				worst_index = i
 				worst_fitness = harmony[-1]
-		if (maximize and solution_vector[-1] > worst_fitness) or (not maximize and solution_vector[-1] < worst_fitness):
+		if (params.maximize and solution_vector[-1] > worst_fitness) or (not params.maximize and solution_vector[-1] < worst_fitness):
 			harmony_memory[worst_index] = solution_vector
 
 if __name__ == '__main__':

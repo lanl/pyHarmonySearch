@@ -38,7 +38,7 @@ class ObjectiveFunctionInterface(object):
 		"""
 		raise NotImplementedError
 
-	def get_value(self, i):
+	def get_value(self, i, j=None):
 		"""
 			Get a valid value of parameter i. You can return values any way you like - uniformly at random, according to some
 			distribution, etc.
@@ -49,6 +49,54 @@ class ObjectiveFunctionInterface(object):
 			763.406542555
 			>>> print obj_fun.get_value(0)
 			-80.8100680841
+
+			j is used only for discrete parameters in the pitch adjustment step. j maps to some value the discrete
+			parameter can take on. If parameter i is continuous, this parameter should be ignored.
+
+			For example, suppose that a variable z is discrete and can take on the values [-3, -1, 0, 3, 4.5, 6.3, 8, 9, 12]. Here,
+			the values are stored in a list. This doesn't necessarily need to be the case, though (e.g., a dict can also be used).
+			Also suppose that z is the 3rd parameter in the objective function (i.e., i = 2).
+			
+			Side note: while the example values are shown here in a sorted list, this doesn't necessarily need to be the case.
+			The only thing that matters is that the index of each discrete value should remain constant. A dict, unsorted list,
+			or some other data structure could be used.
+
+			>>> print obj_fun.get_value(2, 1)
+			-1
+			>>> print obj_fun.get_value(2, 3)
+			3
+		"""
+		raise NotImplementedError
+	
+	def get_index(self, i, v):
+		"""
+			Get the index of the value v of the specified parameter.
+
+			As an example, consider the variable z from get_value() above:
+
+			>>> print obj_fun.get_index(2, 6.3)
+			5
+
+			This will only be called for discrete variables in the pitch adjustment step.
+
+			If possible, store the discrete values in a sorted list that can be binary searched for performance reasons.
+		"""
+		raise NotImplementedError
+	
+	def get_num_discrete_values(self, i):
+		"""
+			Get the number of values possible for the discrete parameter i.
+
+			As an example, consider the variables z and x from get_value() above:
+
+			>>> print get_num_discrete_values(2)
+			9
+			>>> print get_num_discrete_values(0)
+			inf
+
+			This will only be called for discrete variables in the pitch adjustment step. If i is a continuous variable, +inf
+			can be returned, but this function might not be implemented for continuous variables, so this shouldn't be
+			counted on.
 		"""
 		raise NotImplementedError
 	
@@ -60,13 +108,15 @@ class ObjectiveFunctionInterface(object):
 			>>> print obj_fun.lower_bound(1)
 			-1000
 
-			This should be 0-indexed.
+			This will only be called for continuous variables in the pitch adjustment step.
 		"""
 		raise NotImplementedError
 	
 	def upper_bound(self, i):
 		"""
 			Return the upper bound of parameter i.
+
+			This will only be called for continuous variables in the pitch adjustment step.
 		"""
 		raise NotImplementedError
 
@@ -86,12 +136,25 @@ class ObjectiveFunctionInterface(object):
 		"""
 		raise NotImplementedError
 
-	def num_parameters(self):
+	def is_discrete(self, i):
+		"""
+			Return whether or not the parameter at the specified index is a discrete parameter. Not all parameters may be continuous.
+			This only really matters in the pitch adjustment step of HS. Suppose that x is continuous (e.g., x varies in [-1000, 1000]),
+			and y is discrete (e.g., y comes from the set (-5, 3, 6, 9, 12, 45)).
+
+			>>> print obj_fun.is_discrete(0)
+			False
+			>>> print obj_fun.is_discrete(1)
+			True
+		"""
+		raise NotImplementedError
+	
+	def get_num_parameters(self):
 		"""
 			Return the number of parameters used by the objective function. Using the example in fitness(), this will be 2.
 			A sample call may look like the following:
 
-			>>> print obj_fun.num_parameters()
+			>>> print obj_fun.get_num_parameters()
 			2
 		"""
 		raise NotImplementedError
