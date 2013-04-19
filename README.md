@@ -15,7 +15,7 @@ pyHarmonySearch implements the harmony search (HS) global optimization algorithm
 > In the HS algorithm, each musician (= decision variable) plays (= generates) a note (= a value) for finding a best harmony (= global optimum) all together.
 
 ## REQUIREMENTS
-This code does not rely on any 3rd party software. It only requires Python 2.7 or higher. It's likely that it runs on earlier versions of Python and Python 3 via 2to3, but I haven't tested it.
+This code does not rely on any 3rd party software. It only requires Python 2.7 or higher. It may run on earlier versions of Python and Python 3 via 2to3, but I haven't tested it.
 
 ## USING THIS CODE
 To run the sample code, simply type the following:
@@ -40,7 +40,7 @@ The structure of the code is simple. There are four components:
 
 In general, you will make use of this code in two steps:
 
-1. Implement your own params file, complete with objective function inheriting from `ObjectiveFunctionInterface`.
+1. Implement your own params file, complete with objective function named `ObjectiveFunction` that inherits from `ObjectiveFunctionInterface`.
 1. Tune the various input parameters (e.g., hms, hmcr). These are problem-specific, and the numbers I used in the two example implementations might not be appropriate for your problem.
 
 More documentation is provided in harmony_search.py and objective_function_interface.py.
