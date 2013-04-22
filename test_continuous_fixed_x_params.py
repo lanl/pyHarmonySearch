@@ -55,7 +55,7 @@ class TestContinuousFixedXObjectiveFunction(ObjectiveFunctionInterface):
 	def fitness(self, vector):
 		"""
 			maximize -(x^2 + (y+1)^2) + 4
-			The maximum is 4 at (0, -1).
+			The maximum is 3.75 at (0.5, -1) (remember that x is fixed at 0.5 here).
 		"""
 		return -(pow(vector[0], 2) + pow(vector[1] + 1, 2)) + 4
 

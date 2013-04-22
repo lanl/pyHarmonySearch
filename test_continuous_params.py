@@ -44,8 +44,7 @@ class TestContinuousObjectiveFunction(ObjectiveFunctionInterface):
 			maximize -(x^2 + (y+1)^2) + 4
 			The maximum is 4 at (0, -1).
 
-		Note that since all variables are continuous, we don't actually need to implement get_index()
-		and get_num_discrete_values().
+		Note that since all variables are continuous, we don't actually need to implement get_index() and get_num_discrete_values().
 	"""
 
 	def __init__(self):
@@ -62,9 +61,7 @@ class TestContinuousObjectiveFunction(ObjectiveFunctionInterface):
 
 	def get_value(self, i, index=None):
 		"""
-			Values are returned uniformly at random in their entire range.
-
-			Since both parameters are continuous, index can be ignored.
+			Values are returned uniformly at random in their entire range. Since both parameters are continuous, index can be ignored.
 		"""
 		return random.uniform(self.lower_bounds[i], self.upper_bounds[i])
 
