@@ -96,9 +96,11 @@ class TestDiscreteObjectiveFunction(ObjectiveFunctionInterface):
 	def get_num_parameters(self):
 		return len(self.lower_bounds)
 
-	def binary_search(self, a, x, lo=0, hi=None):
-		hi = hi if hi is not None else len(a)
-		pos = bisect_left(a, x, lo, hi)
-		if pos == hi or a[pos] != x:
-			raise ValueError('value [%s] not found' % x)
-		return pos
+	def binary_search(self, a, x):
+		"""
+			Code courtesy Python bisect module: http://docs.python.org/2/library/bisect.html#searching-sorted-lists
+		"""
+		i = bisect_left(a, x)
+		if i != len(a) and a[i] == x:
+			return i
+		raise ValueError
