@@ -31,7 +31,7 @@ class ObjectiveFunctionInterface(object):
 			Return the objective function value given a solution vector containing each decision variable. In practice,
 			vector should be a list of parameters.
 
-			For example, say that the objective function is (-(x^2 + (y+1)^2) + 4). A possible call to fitness may look like this:
+			For example, suppose the objective function is (-(x^2 + (y+1)^2) + 4). A possible call to fitness may look like this:
 
 			>>> print obj_fun.fitness([4, 7])
 			-76
@@ -53,13 +53,8 @@ class ObjectiveFunctionInterface(object):
 			j is used only for discrete parameters in the pitch adjustment step. j maps to some value the discrete
 			parameter can take on. If parameter i is continuous, this parameter should be ignored.
 
-			For example, suppose that a variable z is discrete and can take on the values [-3, -1, 0, 3, 4.5, 6.3, 8, 9, 12]. Here,
-			the values are stored in a list. This doesn't necessarily need to be the case, though (e.g., a dict can also be used).
-			Also suppose that z is the 3rd parameter in the objective function (i.e., i = 2).
-			
-			Side note: while the example values are shown here in a sorted list, this doesn't necessarily need to be the case.
-			The only thing that matters is that the index of each discrete value should remain constant. A dict, unsorted list,
-			or some other data structure could be used.
+			For example, suppose that a variable z is discrete and can take on the values [-3, -1, 0, 3, 4.5, 6.3, 8, 9, 12]. Also
+			suppose that z is the 3rd parameter in the objective function (i.e., i = 2).
 
 			>>> print obj_fun.get_value(2, 1)
 			-1
@@ -79,7 +74,7 @@ class ObjectiveFunctionInterface(object):
 
 			This will only be called for discrete variables in the pitch adjustment step.
 
-			If possible, store the discrete values in a sorted list that can be binary searched for performance reasons.
+			For best performance, store discrete values in a sorted list that can be binary searched.
 		"""
 		raise NotImplementedError
 	
@@ -140,7 +135,7 @@ class ObjectiveFunctionInterface(object):
 		"""
 			Return whether or not the parameter at the specified index is a discrete parameter. Not all parameters may be continuous.
 			This only really matters in the pitch adjustment step of HS. Suppose that x is continuous (e.g., x varies in [-1000, 1000]),
-			and y is discrete (e.g., y comes from the set (-5, 3, 6, 9, 12, 45)).
+			and y is discrete (e.g., y is only allowed to take on values [-5, 3, 6, 9, 12, 45]).
 
 			>>> print obj_fun.is_discrete(0)
 			False

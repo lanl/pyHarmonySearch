@@ -35,7 +35,7 @@ par = 0.5 #pitch adjusting rate
 mpap = 0.25 #maximum pitch adjustment proportion (new parameter defined in pitch_adjustment()) - used for continuous variables only
 mpai = 2 #maximum pitch adjustment index (also defined in pitch_adjustment()) - used for discrete variables only
 
-class ObjectiveFunction(ObjectiveFunctionInterface):
+class TestDiscreteObjectiveFunction(ObjectiveFunctionInterface):
 	"""
 		This is a toy objective function that contains a mixture of continuous and discrete variables.
 

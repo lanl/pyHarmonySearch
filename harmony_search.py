@@ -26,11 +26,14 @@ import argparse
 
 argparser = argparse.ArgumentParser(description='Run harmony search on the specified object in the specified module.')
 argparser.add_argument('module_name', type=str, help='name of module that contains the object to import')
+argparser.add_argument('class_name', type=str, help='name of objective function class inside the specified module')
 args = argparser.parse_args()
 
 #dynamically import the parameters and objective function class from the arguments
 params = __import__(args.module_name)
-obj_fun_class = getattr(params, 'ObjectiveFunction')
+if not hasattr(params, args.class_name):
+	raise ImportWarning('expecting module "%s" to have an objective function class called "%s"' % (args.module_name, args.class_name))
+obj_fun_class = getattr(params, args.class_name)
 obj_fun = obj_fun_class()
 
 #harmony_memory stores the best hms harmonies
@@ -41,6 +44,10 @@ def main():
 		This is the main HS loop. It initializes the harmony memory and then continually generates new harmonies
 		until the stopping criterion (max_imp iterations) is reached.
 	"""
+	#set optional random seed
+	if hasattr(params, 'random_seed'):
+		random.seed(params.random_seed)
+
 	initialize()
 
 	#create max_imp improvisations

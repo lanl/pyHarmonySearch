@@ -33,16 +33,15 @@ hmcr = 0.75 #harmony memory considering rate
 par = 0.5 #pitch adjusting rate
 mpap = 0.25 #maximum pitch adjustment proportion (new parameter defined in pitch_adjustment()) - used for continuous variables only
 mpai = 2 #maximum pitch adjustment index (also defined in pitch_adjustment()) - used for discrete variables only
-random_seed = 8675309 #optional random seed for reproducible results
 
-class TestContinuousObjectiveFunction(ObjectiveFunctionInterface):
+class TestContinuousFixedXObjectiveFunction(ObjectiveFunctionInterface):
 	"""
-		This is a toy objective function that contains only continuous variables.
+		This is a toy objective function that contains only continuous variables. Here, variable x is fixed at 0.5.
 
 		Goal:
 
 			maximize -(x^2 + (y+1)^2) + 4
-			The maximum is 4 at (0, -1).
+			The maximum is 4 at (0, -1). However, when x is fixed at 0.5, the maximum is 3.75 at (0.5, -1).
 
 		Note that since all variables are continuous, we don't actually need to implement get_index()
 		and get_num_discrete_values().
@@ -51,7 +50,7 @@ class TestContinuousObjectiveFunction(ObjectiveFunctionInterface):
 	def __init__(self):
 		self.lower_bounds = [-1000, -1000]
 		self.upper_bounds = [1000, 1000]
-		self.variable = [True, True]
+		self.variable = [False, True]
 
 	def fitness(self, vector):
 		"""
@@ -62,10 +61,12 @@ class TestContinuousObjectiveFunction(ObjectiveFunctionInterface):
 
 	def get_value(self, i, index=None):
 		"""
-			Values are returned uniformly at random in their entire range.
+			Values are returned uniformly at random in their entire range. Since both parameters are continuous, index can be ignored.
 
-			Since both parameters are continuous, index can be ignored.
+			Note that parameter x is fixed (i.e., self.variable[0] == False). We return 0.5 for that parameter.
 		"""
+		if i == 0:
+			return 0.5
 		return random.uniform(self.lower_bounds[i], self.upper_bounds[i])
 
 	def lower_bound(self, i):
