@@ -23,6 +23,8 @@
 
 import random
 import argparse
+from multiprocessing import Pool
+import signal
 
 argparser = argparse.ArgumentParser(description='Run harmony search on the specified object in the specified module.')
 argparser.add_argument('module_name', type=str, help='name of module that contains the object to import')
@@ -36,10 +38,37 @@ if not hasattr(params, args.class_name):
 obj_fun_class = getattr(params, args.class_name)
 obj_fun = obj_fun_class()
 
-#harmony_memory stores the best hms harmonies
-harmony_memory = list()
+#KeyboardInterrupt error-handling code courtesy http://noswap.com/blog/python-multiprocessing-keyboardinterrupt
+def init_worker():
+	signal.signal(signal.SIGINT, signal.SIG_IGN)
 
 def main():
+	"""
+		Here, we use multiprocessing.Pool to do multiple harmony searches simultaneously. Since HS is stochastic (unless random_seed is set),
+		multiple runs can find different results. Here, we run the specified number of iterations on the specified number of processes
+		and print out the best result.
+	"""
+	#try/catch/finally is used to handle KeyboardInterrupt exceptions (otherwise, the main process hangs indefinitely)
+	pool = Pool(params.num_processes, init_worker)
+	try:
+		results = [pool.apply_async(harmony_search) for i in xrange(params.num_iterations)]
+		pool.close() #no more tasks will be submitted to the pool
+	except KeyboardInterrupt:
+		pool.terminate() #if you press CTRL+C, kill all processes
+	finally:
+		pool.join() #wait for all tasks to finish before moving on
+	
+	#find best harmony from all iterations and output
+	best_harmony = None
+	best_fitness = float('-inf') if params.maximize else float('+inf')
+	for result in results:
+		harmony = result.get() #multiprocessing.pool.AsyncResult is returned for each process, so we need to call get() to get at the value
+		if (params.maximize and harmony[-1] > best_fitness) or (not params.maximize and harmony[-1] < best_fitness):
+			best_harmony = harmony
+			best_fitness = harmony[-1]
+	print best_harmony[:-1], best_fitness
+
+def harmony_search():
 	"""
 		This is the main HS loop. It initializes the harmony memory and then continually generates new harmonies
 		until the stopping criterion (max_imp iterations) is reached.
@@ -48,7 +77,11 @@ def main():
 	if hasattr(params, 'random_seed'):
 		random.seed(params.random_seed)
 
-	initialize()
+	#harmony_memory stores the best hms harmonies
+	harmony_memory = list()
+
+	#fill harmony_memory using random parameter values
+	initialize(harmony_memory)
 
 	#create max_imp improvisations
 	num_imp = 0
@@ -57,27 +90,27 @@ def main():
 		solution_vector = list()
 		for i in range(0, obj_fun.get_num_parameters()):
 			if random.random() < params.hmcr:
-				memory_consideration(solution_vector, i)
+				memory_consideration(harmony_memory, solution_vector, i)
 				if random.random() < params.par:
 					pitch_adjustment(solution_vector, i)
 			else:
 				random_selection(solution_vector, i)
 		solution_vector.append(obj_fun.fitness(solution_vector))
 		
-		update_harmony_memory(solution_vector)
+		update_harmony_memory(harmony_memory, solution_vector)
 
 		num_imp += 1
 	
-	#print out best harmony
-	best_index = None
+	#return best harmony
+	best_harmony = None
 	best_fitness = float('-inf') if params.maximize else float('+inf')
-	for i, harmony in enumerate(harmony_memory):
+	for harmony in harmony_memory:
 		if (params.maximize and harmony[-1] > best_fitness) or (not params.maximize and harmony[-1] < best_fitness):
-			best_index = i
+			best_harmony = harmony
 			best_fitness = harmony[-1]
-	print harmony_memory[best_index][:-1], best_fitness
+	return best_harmony
 
-def initialize():
+def initialize(harmony_memory):
 	"""
 		Initialize harmony_memory, the matrix (list of lists) containing the various harmonies (solution vectors). Note
 		that we aren't actually doing any matrix operations, so a library like NumPy isn't necessary here. The matrix
@@ -97,7 +130,7 @@ def random_selection(solution_vector, i):
 	"""
 	solution_vector.append(obj_fun.get_value(i))
 
-def memory_consideration(solution_vector, i):
+def memory_consideration(harmony_memory, solution_vector, i):
 	"""
 		Randomly choose a note previously played.
 	"""
@@ -135,7 +168,7 @@ def pitch_adjustment(solution_vector, i):
 				#adjust pitch up
 				solution_vector[i] = (obj_fun.upper_bound(i) - solution_vector[i]) * random.random() * params.mpap
 	
-def update_harmony_memory(solution_vector):
+def update_harmony_memory(harmony_memory, solution_vector):
 	"""
 		Update the harmony memory if necessary with the given harmony. If the given harmony is better than the worst
 		harmony in memory, replace it. This function doesn't allow duplicate harmonies in memory.

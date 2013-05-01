@@ -35,6 +35,10 @@ mpap = 0.25 #maximum pitch adjustment proportion (new parameter defined in pitch
 mpai = 2 #maximum pitch adjustment index (also defined in pitch_adjustment()) - used for discrete variables only
 random_seed = 8675309 #optional random seed for reproducible results
 
+#because random_seed is defined, there's no point in running this multiple times
+num_processes = 1
+num_iterations = 1
+
 class TestContinuousObjectiveFunction(ObjectiveFunctionInterface):
 	"""
 		This is a toy objective function that contains only continuous variables.

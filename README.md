@@ -10,12 +10,14 @@ Geoffrey Fairchild
 This software is licensed under the [BSD 3-Clause License](http://opensource.org/licenses/BSD-3-Clause). Please refer to the separate LICENSE.txt file for the exact text of the license. You are obligated to give attribution if you use this code.
 
 ## ABOUT
-pyHarmonySearch implements the harmony search (HS) global optimization algorithm in Python. HS is a metaheuristic search algorithm that, similar to simulated annealing, tabu, and evolutionary searches, is based on real world phenomena. Specifically, HS mimics a jazz band improvising together. Courtesy [Wikipedia](http://en.wikipedia.org/wiki/Harmony_search):
+pyHarmonySearch is a pure Python implementation of the harmony search (HS) global optimization algorithm in Python. HS is a metaheuristic search algorithm that, similar to simulated annealing, tabu, and evolutionary searches, is based on real world phenomena. Specifically, HS mimics a jazz band improvising together. Courtesy [Wikipedia](http://en.wikipedia.org/wiki/Harmony_search):
 
 > In the HS algorithm, each musician (= decision variable) plays (= generates) a note (= a value) for finding a best harmony (= global optimum) all together.
 
+pyHarmonySearch supports both continuous and discrete variables and can take advantage of parallel processing using [Python's built-in multiprocessing module](http://docs.python.org/2/library/multiprocessing.html).
+
 ## REQUIREMENTS
-This code does not rely on any 3rd party software. It only requires Python 2.7 or higher. It may run on earlier versions of Python and Python 3 via 2to3, but I haven't tested it.
+This code does not rely on any 3rd party software. It only requires Python 2.7 or higher. It may work under Python 3 using 2to3, but I haven't tested it.
 
 ## USING THIS CODE
 To run the sample code, simply type the following:
@@ -29,29 +31,29 @@ To run the sample code, simply type the following:
 	
 The output is the solution (e.g., `3.979`) appended to the solution vector (e.g., `[0.002, -0.855]`).
 
-Note that like many similar optimization algorithms, HS is stochastic in nature. Thus, you will get a slightly different result every time you run it. An optional `random_seed` parameter is available to allow reproducible results.
+Note that like many similar optimization algorithms, HS is stochastic in nature. Thus, you will get a slightly different result every time you run it. An optional `random_seed` parameter is available to allow reproducible results. Because of the stochasticity, I have added the ability to run multiple iterations of HS simultaneously using [Python's multiprocessing module](http://docs.python.org/2/library/multiprocessing.html). The parameters `num_processes` and `num_iterations` define the number of processes on which to run the specified number of iterations. The resulting solution is the best solution found from all iterations.
 
 This HS implementation allows both continuous variables (e.g., x is in the range `[-5, 5]`) and discrete variables (e.g., x is chosen from the set `(3, 4, 6, 8, 9)`).
 
 The structure of this project is as follows:
 
-* harmony_search.py - The Python implementation of the HS algorithm.
-* objective_function_interface.py - The "interface" that your objective function needs to implement.
-* test_continuous_params.py - Example objective function implementation where both variables are continuous. The test objective function maximizes the function `(-(x^2 + (y+1)^2) + 4)`. The answer is `4` at the point `(0, -1)`. This implementation uses `random_seed`, so the same result will be returned every run.
-* test_discrete_params.py - Example objective function identical to test_continuous_params.py, only parameter `x` is discrete and `y` is continuous. `random_seed` is not set, so successive runs will yield different results.
-* test_continuous_fixed_x_params.py - Example objective function identical to test_continuous_params.py, only parameter `x` is not variable and is fixed at `0.5`. `random_seed` is not set.
+* **harmony_search.py** - The Python implementation of the HS algorithm.
+* **objective_function_interface.py** - The "interface" that your objective function needs to implement.
+* **test_continuous_params.py** - Example objective function implementation where both variables are continuous. The test objective function maximizes the function `(-(x^2 + (y+1)^2) + 4)`. The answer is `4` at the point `(0, -1)`. This implementation uses `random_seed`, so the same result will be returned every run. `num_processes = 1` and `num_iterations = 1` since multiple iterations will return identical results.
+* **test_discrete_params.py** - Example objective function identical to **test_continuous_params.py**, only parameter `x` is discrete and `y` is continuous. `random_seed` is not set, so successive runs will yield different results. `num_processes` is set to the number of logical CPUs on your machine, and `num_iterations = num_processes × 5`
+* **test_continuous_fixed_x_params.py** - Example objective function identical to **test_continuous_params.py**, only parameter `x` is not variable and is fixed at `0.5`. `random_seed` is not set. `num_processes` and `num_iterations` are set as in **test_discrete_params.py**.
 
 In general, you will make use of this code in two steps:
 
 1. Implement your own params file, complete with objective function that inherits from `ObjectiveFunctionInterface`.
 1. Tune the various input parameters (e.g., `hms`, `hmcr`). These are problem-specific, and the numbers used in the example implementations might not be appropriate for your problem.
 
-More documentation is provided in harmony_search.py and objective_function_interface.py.
+More documentation is provided in **harmony_search.py** and **objective_function_interface.py**.
 
 ## REFERENCES
 [http://harry.me/2011/05/07/neat-algorithms---harmony-search/](http://harry.me/2011/05/07/neat-algorithms---harmony-search/) provides a simple introduction on how HS works. Also, see the [HS Wikipedia entry](http://en.wikipedia.org/wiki/Harmony_search).
 
-Harmony search was first introduced by Geem et al. in 2001:
+HS was first introduced by Geem et al. in 2001:
 
 Z. W. Geem, J. H. Kim, and G. V Loganathan, "A New Heuristic Optimization Algorithm: Harmony Search", Simulation, vol. 76, no. 2, pp. 60-68, Feb. 2001.
 	

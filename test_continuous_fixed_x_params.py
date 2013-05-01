@@ -24,6 +24,7 @@
 from objective_function_interface import ObjectiveFunctionInterface
 from math import pow
 import random
+from multiprocessing import cpu_count
 
 #define all input parameters
 maximize = True #do we maximize or minimize?
@@ -33,6 +34,9 @@ hmcr = 0.75 #harmony memory considering rate
 par = 0.5 #pitch adjusting rate
 mpap = 0.25 #maximum pitch adjustment proportion (new parameter defined in pitch_adjustment()) - used for continuous variables only
 mpai = 2 #maximum pitch adjustment index (also defined in pitch_adjustment()) - used for discrete variables only
+
+num_processes = cpu_count() #use number of logical CPUs (on my i7, this is 8)
+num_iterations = num_processes * 5 #each CPU does 5 iterations (on my machine, we do 40 total iterations)
 
 class TestContinuousFixedXObjectiveFunction(ObjectiveFunctionInterface):
 	"""
