@@ -38,8 +38,11 @@ if not hasattr(params, args.class_name):
 obj_fun_class = getattr(params, args.class_name)
 obj_fun = obj_fun_class()
 
-#KeyboardInterrupt error-handling code courtesy http://noswap.com/blog/python-multiprocessing-keyboardinterrupt
 def init_worker():
+	"""
+		Each worker will be instructed to ignore keyboard interruptions. Note that workers won't stop right away because Pool.join()
+		can't be interrupted. This will at least prevent the main process from hanging.
+	"""
 	signal.signal(signal.SIGINT, signal.SIG_IGN)
 
 def main():
@@ -48,21 +51,16 @@ def main():
 		multiple runs can find different results. Here, we run the specified number of iterations on the specified number of processes
 		and print out the best result.
 	"""
-	#try/catch/finally is used to handle KeyboardInterrupt exceptions (otherwise, the main process hangs indefinitely)
 	pool = Pool(params.num_processes, init_worker)
-	try:
-		results = [pool.apply_async(harmony_search) for i in xrange(params.num_iterations)]
-		pool.close() #no more tasks will be submitted to the pool
-	except KeyboardInterrupt:
-		pool.terminate() #if you press CTRL+C, kill all processes
-	finally:
-		pool.join() #wait for all tasks to finish before moving on
+	results = [pool.apply_async(harmony_search) for i in xrange(params.num_iterations)]
+	pool.close() #no more tasks will be submitted to the pool
+	pool.join() #wait for all tasks to finish before moving on
 	
 	#find best harmony from all iterations and output
 	best_harmony = None
 	best_fitness = float('-inf') if params.maximize else float('+inf')
 	for result in results:
-		harmony = result.get() #multiprocessing.pool.AsyncResult is returned for each process, so we need to call get() to get at the value
+		harmony = result.get() #multiprocessing.pool.AsyncResult is returned for each process, so we need to call get() to pull out the value
 		if (params.maximize and harmony[-1] > best_fitness) or (not params.maximize and harmony[-1] < best_fitness):
 			best_harmony = harmony
 			best_fitness = harmony[-1]
