@@ -86,7 +86,7 @@ def harmony_search():
 	while(num_imp < params.max_imp):
 		#generate new harmony
 		solution_vector = list()
-		for i in range(0, obj_fun.get_num_parameters()):
+		for i in xrange(0, obj_fun.get_num_parameters()):
 			if random.random() < params.hmcr:
 				memory_consideration(harmony_memory, solution_vector, i)
 				if random.random() < params.par:
@@ -114,9 +114,9 @@ def initialize(harmony_memory):
 		that we aren't actually doing any matrix operations, so a library like NumPy isn't necessary here. The matrix
 		merely stores previous harmonies.
 	"""
-	for i in range(0, params.hms):
+	for i in xrange(0, params.hms):
 		solution_vector = list()
-		for j in range(0, obj_fun.get_num_parameters()):
+		for j in xrange(0, obj_fun.get_num_parameters()):
 			random_selection(solution_vector, j)
 		solution_vector.append(obj_fun.fitness(solution_vector))
 		harmony_memory.append(solution_vector)
