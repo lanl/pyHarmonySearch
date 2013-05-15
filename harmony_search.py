@@ -40,8 +40,8 @@ obj_fun = obj_fun_class()
 
 def init_worker():
 	"""
-		Each worker will be instructed to ignore keyboard interruptions. Note that workers won't stop right away because Pool.join()
-		can't be interrupted. This will at least prevent the main process from hanging.
+		Each worker will be instructed to ignore keyboard interruptions (i.e., CTRL+C). Note that workers won't stop right away because Pool.join()
+		can't be interrupted. This is a hack to prevent the main process from hanging.
 	"""
 	signal.signal(signal.SIGINT, signal.SIG_IGN)
 
@@ -142,10 +142,11 @@ def pitch_adjustment(solution_vector, i):
 
 		The probability of adjusting the pitch either up or down is fixed at 0.5. The maximum pitch adjustment proportion (mpap)
 		and maximum pitch adjustment index (mpai) determine the maximum amount the pitch may change for continuous and discrete
-		variables, respectively. For example, suppose that it is decided via coin flip that the pitch will be adjusted down.
-		Also suppose that mpap is set to 0.25. This means that the maximum value the pitch can be dropped will be 25% of the
-		difference between the lower bound and the current pitch. mpai functions similarly, only it relies on indices of the possible
-		values instead.
+		variables, respectively.
+		
+		For example, suppose that it is decided via coin flip that the pitch will be adjusted down. Also suppose that mpap is set to 0.25.
+		This means that the maximum value the pitch can be dropped will be 25% of the difference between the lower bound and the current
+		pitch. mpai functions similarly, only it relies on indices of the possible values instead.
 	"""
 	if(obj_fun.is_variable(i)):
 		if obj_fun.is_discrete(i):

@@ -23,7 +23,7 @@
 
 class ObjectiveFunctionInterface(object):
 	"""
-		This interface must be implemented by you and passed to initialize(). This defines the objective function HS optimizes.
+		This interface must be implemented by you. This defines the objective function HS optimizes.
 	"""
 
 	def fitness(self, vector):
@@ -51,7 +51,7 @@ class ObjectiveFunctionInterface(object):
 			-80.8100680841
 
 			j is used only for discrete parameters in the pitch adjustment step. j maps to some value the discrete
-			parameter can take on. If parameter i is continuous, this parameter should be ignored.
+			parameter can take on. If parameter i is continuous, j should be ignored.
 
 			For example, suppose that a variable z is discrete and can take on the values [-3, -1, 0, 3, 4.5, 6.3, 8, 9, 12]. Also
 			suppose that z is the 3rd parameter in the objective function (i.e., i = 2).
@@ -118,8 +118,8 @@ class ObjectiveFunctionInterface(object):
 	def is_variable(self, i):
 		"""
 			Return whether or not the parameter at the specified index should be varied by HS. It may be the case that HS should
-			only vary certain parameters to reduce the search space. In the fitness() example, perhaps HS should only vary x. This call
-			may look like:
+			only vary certain parameters while others should remain fixed. In the fitness() example, perhaps HS should only vary x.
+			This call may look like:
 
 			>>> print obj_fun.is_variable(0)
 			True
