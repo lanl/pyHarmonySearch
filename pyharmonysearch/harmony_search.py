@@ -171,10 +171,10 @@ class HarmonySearch(object):
 				#continuous variable
 				if random.random() < 0.5:
 					#adjust pitch down
-					solution_vector[i] = (solution_vector[i] - self._obj_fun.get_lower_bound(i)) * random.random() * self._obj_fun.get_mpap()
+					solution_vector[i] -= (solution_vector[i] - self._obj_fun.get_lower_bound(i)) * random.random() * self._obj_fun.get_mpap()
 				else:
 					#adjust pitch up
-					solution_vector[i] = (self._obj_fun.get_upper_bound(i) - solution_vector[i]) * random.random() * self._obj_fun.get_mpap()
+					solution_vector[i] += (self._obj_fun.get_upper_bound(i) - solution_vector[i]) * random.random() * self._obj_fun.get_mpap()
 		
 	def _update_harmony_memory(self, solution_vector):
 		"""

@@ -25,7 +25,7 @@ from distutils.core import setup
 
 setup(
 	name = 'pyHarmonySearch',
-	version = '1.0',
+	version = '1.0.1',
 	description = 'pyHarmonySearch is a pure Python implementation of the harmony search (HS) global optimization algorithm.',
 	long_description = """pyHarmonySearch is a pure Python implementation of the harmony search (HS) global optimization algorithm. HS is a metaheuristic search algorithm that, similar to simulated annealing, tabu, and evolutionary searches, is based on real world phenomena. Specifically, HS mimics a jazz band improvising together. Courtesy `Wikipedia <http://en.wikipedia.org/wiki/Harmony_search>`_:
 

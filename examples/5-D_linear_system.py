@@ -22,52 +22,66 @@
 """
 
 from pyharmonysearch import ObjectiveFunctionInterface, harmony_search
-from math import pow
 import random
+from bisect import bisect_left
 from multiprocessing import cpu_count
 
 class ObjectiveFunction(ObjectiveFunctionInterface):
 	"""
-		This is a toy objective function that contains only continuous variables. Here, variable x is fixed at 0.5.
+		This is a 5-D system of equations that comes from http://answers.yahoo.com/question/index?qid=20120830142005AA5dTyg.
+		This example is quite a bit more computationally expensive than the others.
 
-		Goal:
-
-			maximize -(x^2 + (y+1)^2) + 4
-			The maximum is 4 at (0, -1). However, when x is fixed at 0.5, the maximum is 3.75 at (0.5, -1).
-
-		Note that since all variables are continuous, we don't actually need to implement get_index()
-		and get_num_discrete_values().
+		Find values of w, x, y, and z that satisfy the following system of equations:
+		
+			A + 2B + 3C + 2D = 19.968
+			-B + C = -1.15
+			2B - 3C + D = 4.624
+			3B + C + 2D + E = 22.312
+			2D + E = 15.882
+		
+		First, I transform the system:
+		
+			A + 2B + 3C + 2D - 19.968 = 0
+			-B + C + 1.15 = 0
+			2B - 3C + D - 4.624 = 0
+			3B + C + 2D + E - 22.312 = 0
+			2D + E - 15.882 = 0
+		
+		I treat this as a minimization problem:
+		
+			min(sum(abs(A + 2B + 3C + 2D - 19.968) +
+					abs(-B + C + 1.15) +
+					abs(2B - 3C + D - 4.624) +
+					abs(3B + C + 2D + E - 22.312) +
+					abs(2D + E - 15.882)))
+		
+		Thus, we've found the optimal solution if the fitness is zero.
+		
+		The solution is A = 7.805, B = 1.895, C = 0.745, D = 3.069, E = 9.744.
 	"""
 
 	def __init__(self):
-		self._lower_bounds = [-1000, -1000]
-		self._upper_bounds = [1000, 1000]
-		self._variable = [False, True]
+		#all variables vary in the range [-100, 100]
+		self._lower_bounds = [-100, -100, -100, -100, -100]
+		self._upper_bounds = [100, 100, 100, 100, 100]
+		self._variable = [True, True, True, True, True]
 		
 		#define all input parameters
-		self._maximize = True #do we maximize or minimize?
-		self._max_imp = 50000 #maximum number of improvisations
-		self._hms = 100 #harmony memory size
+		self._maximize = False #minimize
+		self._max_imp = 500000 #maximum number of improvisations
+		self._hms = 250 #harmony memory size
 		self._hmcr = 0.75 #harmony memory considering rate
 		self._par = 0.5 #pitch adjusting rate
-		self._mpap = 0.25 #maximum pitch adjustment proportion (new parameter defined in pitch_adjustment()) - used for continuous variables only
-		self._mpai = 2 #maximum pitch adjustment index (also defined in pitch_adjustment()) - used for discrete variables only
+		self._mpap = 0.5 #maximum pitch adjustment proportion (new parameter defined in pitch_adjustment()) - used for continuous variables only
 
 	def get_fitness(self, vector):
-		"""
-			maximize -(x^2 + (y+1)^2) + 4
-			The maximum is 3.75 at (0.5, -1) (remember that x is fixed at 0.5 here).
-		"""
-		return -(pow(vector[0], 2) + pow(vector[1] + 1, 2)) + 4
+		return abs(vector[0] + 2*vector[1] + 3*vector[2] + 2*vector[3]             - 19.968) + \
+			   abs(          -   vector[1] +   vector[2]                           + 1.15) + \
+			   abs(            2*vector[1] - 3*vector[2] +   vector[3]             - 4.624) + \
+			   abs(            3*vector[1] +   vector[2] + 2*vector[3] + vector[4] - 22.312) + \
+			   abs(                                        2*vector[3] + vector[4] - 15.882)
 
-	def get_value(self, i, index=None):
-		"""
-			Values are returned uniformly at random in their entire range. Since both parameters are continuous, index can be ignored.
-
-			Note that parameter x is fixed (i.e., self._variable[0] == False). We return 0.5 for that parameter.
-		"""
-		if i == 0:
-			return 0.5
+	def get_value(self, i, j=None):
 		return random.uniform(self._lower_bounds[i], self._upper_bounds[i])
 
 	def get_lower_bound(self, i):
@@ -80,14 +94,13 @@ class ObjectiveFunction(ObjectiveFunctionInterface):
 		return self._variable[i]
 	
 	def is_discrete(self, i):
-		#all variables are continuous
 		return False
 	
 	def get_num_parameters(self):
 		return len(self._lower_bounds)
 	
 	def use_random_seed(self):
-		return hasattr(self, '_random_seed') and self._random_seed
+		return False
 	
 	def get_max_imp(self):
 		return self._max_imp
@@ -112,6 +125,6 @@ class ObjectiveFunction(ObjectiveFunctionInterface):
 
 if __name__ == '__main__':
 	obj_fun = ObjectiveFunction()
-	num_processes = cpu_count() #use number of logical CPUs
-	num_iterations = num_processes * 5 #each process does 5 iterations
+	num_processes = cpu_count() - 1 #use number of logical CPUs - 1 so that I have one available for use
+	num_iterations = num_processes #each process does 1 iterations
 	print harmony_search(obj_fun, num_processes, num_iterations)

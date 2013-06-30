@@ -29,14 +29,16 @@ From source:
 	python setup.py install
 
 ## USING THIS CODE
-There are three examples included, each with varying restrictions. All three examples maximize the function `(-(x^2 + (y+1)^2) + 4)` (the answer is `4` at the point `(0, -1)`).
+There are four examples included. The first three examples are variations on each other that find the global maximum of a simple 2-D function. The fourth example stochastically solves a 5-D linear system of equations. Read the documentation in each example for more information.
 
-	> python test_continuous_seed.py
+	> python continuous_seed.py
 	([0.00231032289834628, -0.8551231136684692], 3.9790053502149862)
-	> python test_discrete.py
+	> python discrete.py
 	([0, -1.0018982245301231], 3.9999963967436334)
-	> python test_continuous_fixed_x.py
+	> python continuous_fixed_x.py
 	([0.5, -1.0033134899758807], 3.74998902078418)
+	> python linear_system.py
+	([4.052292922336895, 1.6898107367416735, 1.1055896068620388, 4.577893112908056, 6.746541898876046], 0.9010333766161225)
 	
 The output is a tuple, where the first element is the solution vector (e.g., `[0.002, -0.855]`), and the second element is the solution (e.g., `3.979`).
 
