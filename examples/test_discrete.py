@@ -21,25 +21,13 @@
 	THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 
-from objective_function_interface import ObjectiveFunctionInterface
+from pyharmonysearch import ObjectiveFunctionInterface, harmony_search
 from math import pow
 import random
 from bisect import bisect_left
 from multiprocessing import cpu_count
 
-#define all input parameters
-maximize = True #do we maximize or minimize?
-max_imp = 50000 #maximum number of improvisations
-hms = 100 #harmony memory size
-hmcr = 0.75 #harmony memory considering rate
-par = 0.5 #pitch adjusting rate
-mpap = 0.25 #maximum pitch adjustment proportion (new parameter defined in pitch_adjustment()) - used for continuous variables only
-mpai = 2 #maximum pitch adjustment index (also defined in pitch_adjustment()) - used for discrete variables only
-
-num_processes = cpu_count() #use number of logical CPUs (on my i7, this is 8)
-num_iterations = num_processes * 5 #each CPU does 5 iterations (on my machine, we do 40 total iterations)
-
-class TestDiscreteObjectiveFunction(ObjectiveFunctionInterface):
+class ObjectiveFunction(ObjectiveFunctionInterface):
 	"""
 		This is a toy objective function that contains a mixture of continuous and discrete variables.
 
@@ -53,54 +41,55 @@ class TestDiscreteObjectiveFunction(ObjectiveFunctionInterface):
 	"""
 
 	def __init__(self):
-		self.lower_bounds = [None, -1000]
-		self.upper_bounds = [None, 1000]
-		self.variable = [True, True]
-		self.discrete_values = [[x for x in xrange(-100, 101)], None]
+		self._lower_bounds = [None, -1000]
+		self._upper_bounds = [None, 1000]
+		self._variable = [True, True]
+		self._discrete_values = [[x for x in xrange(-100, 101)], None]
+		
+		#define all input parameters
+		self._maximize = True #do we maximize or minimize?
+		self._max_imp = 50000 #maximum number of improvisations
+		self._hms = 100 #harmony memory size
+		self._hmcr = 0.75 #harmony memory considering rate
+		self._par = 0.5 #pitch adjusting rate
+		self._mpap = 0.25 #maximum pitch adjustment proportion (new parameter defined in pitch_adjustment()) - used for continuous variables only
+		self._mpai = 2 #maximum pitch adjustment index (also defined in pitch_adjustment()) - used for discrete variables only
 
-	def fitness(self, vector):
+	def get_fitness(self, vector):
 		return -(pow(vector[0], 2) + pow(vector[1] + 1, 2)) + 4
 
 	def get_value(self, i, j=None):
 		if self.is_discrete(i):
 			if j:
-				return self.discrete_values[i][j]
-			return self.discrete_values[i][random.randint(0, len(self.discrete_values[i]) - 1)]
-		return random.uniform(self.lower_bounds[i], self.upper_bounds[i])
+				return self._discrete_values[i][j]
+			return self._discrete_values[i][random.randint(0, len(self._discrete_values[i]) - 1)]
+		return random.uniform(self._lower_bounds[i], self._upper_bounds[i])
 
-	def lower_bound(self, i):
+	def get_lower_bound(self, i):
 		"""
 			This won't be called except for continuous variables, so we don't need to worry about returning None.
 		"""
-		return self.lower_bounds[i]
+		return self._lower_bounds[i]
 	
-	def upper_bound(self, i):
+	def get_upper_bound(self, i):
 		"""
 			This won't be called except for continuous variables.
 		"""
-		return self.upper_bounds[i]
+		return self._upper_bounds[i]
 
 	def get_num_discrete_values(self, i):
 		if self.is_discrete(i):
-			return len(self.discrete_values[i])
+			return len(self._discrete_values[i])
 		return float('+inf')
 	
 	def get_index(self, i, v):
 		"""
 			Because self.discrete_values is in sorted order, we can use binary search.
 		"""
-		return self.binary_search(self.discrete_values[i], v)
-	
-	def is_variable(self, i):
-		return self.variable[i]
-	
-	def is_discrete(self, i):
-		return self.discrete_values[i] is not None
-	
-	def get_num_parameters(self):
-		return len(self.lower_bounds)
-
-	def binary_search(self, a, x):
+		return ObjectiveFunction.binary_search(self._discrete_values[i], v)
+		
+	@staticmethod
+	def binary_search(a, x):
 		"""
 			Code courtesy Python bisect module: http://docs.python.org/2/library/bisect.html#searching-sorted-lists
 		"""
@@ -108,3 +97,42 @@ class TestDiscreteObjectiveFunction(ObjectiveFunctionInterface):
 		if i != len(a) and a[i] == x:
 			return i
 		raise ValueError
+	
+	def is_variable(self, i):
+		return self._variable[i]
+	
+	def is_discrete(self, i):
+		return self._discrete_values[i] is not None
+	
+	def get_num_parameters(self):
+		return len(self._lower_bounds)
+	
+	def use_random_seed(self):
+		return hasattr(self, '_random_seed') and self._random_seed
+	
+	def get_max_imp(self):
+		return self._max_imp
+		
+	def get_hmcr(self):
+		return self._hmcr
+		
+	def get_par(self):
+		return self._par
+		
+	def get_hms(self):
+		return self._hms
+		
+	def get_mpai(self):
+		return self._mpai
+	
+	def get_mpap(self):
+		return self._mpap
+		
+	def maximize(self):
+		return self._maximize
+
+if __name__ == '__main__':
+	obj_fun = ObjectiveFunction()
+	num_processes = cpu_count() #use number of logical CPUs
+	num_iterations = num_processes * 5 #each process does 5 iterations
+	print harmony_search(obj_fun, num_processes, num_iterations)

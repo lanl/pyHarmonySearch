@@ -14,41 +14,47 @@ pyHarmonySearch is a pure Python implementation of the harmony search (HS) globa
 
 > In the HS algorithm, each musician (= decision variable) plays (= generates) a note (= a value) for finding a best harmony (= global optimum) all together.
 
-pyHarmonySearch supports both continuous and discrete variables and can take advantage of parallel processing using [Python's built-in multiprocessing module](http://docs.python.org/2/library/multiprocessing.html).
+pyHarmonySearch supports both continuous and discrete variables and can take advantage of parallel processing using [Python's multiprocessing module](http://docs.python.org/2/library/multiprocessing.html).
 
 ## REQUIREMENTS
 This code does not rely on any 3rd party software. It only requires Python 2.7 or higher. It may work under Python 3 using 2to3, but I haven't tested it.
 
+## INSTALL
+First, install pyHarmonySearch. Using `pip`:
+
+	pip install pyHarmonySearch
+
+From source:
+
+	python setup.py install
+
 ## USING THIS CODE
-To run the sample code, simply type the following:
+There are three examples included, each with varying restrictions. All three examples maximize the function `(-(x^2 + (y+1)^2) + 4)` (the answer is `4` at the point `(0, -1)`).
 
-	> python harmony_search.py test_continuous_params TestContinuousObjectiveFunction
-	[0.00231032289834628, -0.8551231136684692] 3.97900535021
-	> python harmony_search.py test_discrete_params TestDiscreteObjectiveFunction
-	[0, -0.999840357461153] 3.99999997451
-	> python harmony_search.py test_continuous_fixed_x_params TestContinuousFixedXObjectiveFunction
-	[0.5, -0.9661388447184436] 3.74885342216
+	> python test_continuous_seed.py
+	([0.00231032289834628, -0.8551231136684692], 3.9790053502149862)
+	> python test_discrete.py
+	([0, -1.0018982245301231], 3.9999963967436334)
+	> python test_continuous_fixed_x.py
+	([0.5, -1.0033134899758807], 3.74998902078418)
 	
-The output is the solution (e.g., `3.979`) appended to the solution vector (e.g., `[0.002, -0.855]`).
+The output is a tuple, where the first element is the solution vector (e.g., `[0.002, -0.855]`), and the second element is the solution (e.g., `3.979`).
 
-Note that like many similar optimization algorithms, HS is stochastic in nature. Thus, you will get a slightly different result every time you run it. An optional `random_seed` parameter is available to allow reproducible results. Because of the stochasticity, I have added the ability to run multiple iterations of HS simultaneously using [Python's multiprocessing module](http://docs.python.org/2/library/multiprocessing.html). The parameters `num_processes` and `num_iterations` define the number of processes on which to run the specified number of iterations. The resulting solution is the best solution found from all iterations.
+Note that like many similar optimization algorithms, HS is stochastic in nature. Thus, you will get a slightly different result every time you run it. Because of the stochasticity, I have added the ability to run multiple iterations of HS simultaneously using [Python's multiprocessing module](http://docs.python.org/2/library/multiprocessing.html); you simply specify the number of processes on which to run the specified number of iterations. The resulting solution is the best solution found from all iterations. An optional random seed is available to allow reproducible results.
 
-This HS implementation allows both continuous variables (e.g., x is in the range `[-5, 5]`) and discrete variables (e.g., x is chosen from the set `(3, 4, 6, 8, 9)`).
+In general, you will make use of this code in three steps:
 
-The structure of this project is as follows:
-
-* **harmony_search.py** - The Python implementation of the HS algorithm.
-* **objective_function_interface.py** - The "interface" that your objective function needs to implement.
-* **test_continuous_params.py** - Example objective function implementation where both variables are continuous. The test objective function maximizes the function `(-(x^2 + (y+1)^2) + 4)`. The answer is `4` at the point `(0, -1)`. This implementation uses `random_seed`, so the same result will be returned every run. `num_processes = 1` and `num_iterations = 1` since multiple iterations will return identical results.
-* **test_discrete_params.py** - Example objective function identical to **test_continuous_params.py**, only parameter `x` is discrete and `y` is continuous. `random_seed` is not set, so successive runs will yield different results. `num_processes` is set to the number of logical CPUs on your machine, and `num_iterations = num_processes × 5`
-* **test_continuous_fixed_x_params.py** - Example objective function identical to **test_continuous_params.py**, only parameter `x` is not variable and is fixed at `0.5`. `random_seed` is not set. `num_processes` and `num_iterations` are set as in **test_discrete_params.py**.
-
-In general, you will make use of this code in two steps:
-
-1. Implement your own params file, complete with objective function that inherits from `ObjectiveFunctionInterface`.
+1. Implement your own objective function that inherits from `ObjectiveFunctionInterface`.
 1. Tune the various input parameters (e.g., `hms`, `hmcr`). These are problem-specific, and the numbers used in the example implementations might not be appropriate for your problem.
+1. Run HS:
+	
+	```python
+	from pyharmonysearch import harmony_search
+	obj_fun = ObjectiveFunction()
+	print harmony_search(obj_fun, num_processes, num_iterations)
+	```
 
-More documentation is provided in **harmony_search.py** and **objective_function_interface.py**.
+More documentation is provided in **harmony_search.py** and **objective_function_interface.py** and in the examples.
 
 ## REFERENCES
 [http://harry.me/2011/05/07/neat-algorithms---harmony-search/](http://harry.me/2011/05/07/neat-algorithms---harmony-search/) provides a simple introduction on how HS works. Also, see the [HS Wikipedia entry](http://en.wikipedia.org/wiki/Harmony_search).

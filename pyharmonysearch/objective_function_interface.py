@@ -26,7 +26,7 @@ class ObjectiveFunctionInterface(object):
 		This interface must be implemented by you. This defines the objective function HS optimizes.
 	"""
 
-	def fitness(self, vector):
+	def get_fitness(self, vector):
 		"""
 			Return the objective function value given a solution vector containing each decision variable. In practice,
 			vector should be a list of parameters.
@@ -95,7 +95,7 @@ class ObjectiveFunctionInterface(object):
 		"""
 		raise NotImplementedError
 	
-	def lower_bound(self, i):
+	def get_lower_bound(self, i):
 		"""
 			Return the lower bound of parameter i. Using the example for fitness(), the lower bound for y may be -1000.
 			Seeing as y is the 2nd parameter (index 1 in a 0-indexed system), this call may look like the following:
@@ -107,7 +107,7 @@ class ObjectiveFunctionInterface(object):
 		"""
 		raise NotImplementedError
 	
-	def upper_bound(self, i):
+	def get_upper_bound(self, i):
 		"""
 			Return the upper bound of parameter i.
 
@@ -151,5 +151,60 @@ class ObjectiveFunctionInterface(object):
 
 			>>> print obj_fun.get_num_parameters()
 			2
+		"""
+		raise NotImplementedError
+	
+	def use_random_seed(self):
+		"""
+			Return whether or not a random seed should be used. If a random seed is used, the same result will be generated each time. 
+		"""
+		raise NotImplementedError
+	
+	def get_random_seed(self):
+		"""
+			Return an optional random seed. If use_random_seed() == False, this won't be called.
+		"""
+		raise NotImplementedError
+	
+	def get_max_imp(self):
+		"""
+			Return the maximum number of improvisations. This represents the stopping criterion (i.e., the number of fitness evaluations HS
+			performs until search stops).
+		"""
+		raise NotImplementedError
+		
+	def get_hmcr(self):
+		"""
+			Return the harmony memory considering rate. This represents the proportion of memory consideration calls vs. random selection calls.
+		"""
+		raise NotImplementedError
+		
+	def get_par(self):
+		"""
+			Return the pitch adjusting rate. This represents how often pitch adjustment will occur if memory consideration has already been done.
+		"""
+		raise NotImplementedError
+		
+	def get_hms(self):
+		"""
+			Return the harmony memory size. This represents the size of the vector that stores previously best harmonies.
+		"""
+		raise NotImplementedError
+		
+	def get_mpai(self):
+		"""
+			Return the maximum pitch adjustment index. This determines the range from which pitch adjustment may occur for discrete variables.
+		"""
+		raise NotImplementedError
+	
+	def get_mpap(self):
+		"""
+			Return the maximum pitch adjustment proportion. This determines the range from which pitch adjustment may occur for continuous variables.
+		"""
+		raise NotImplementedError
+		
+	def maximize(self):
+		"""
+			Return True if this is a maximization problem, False otherwise.
 		"""
 		raise NotImplementedError
