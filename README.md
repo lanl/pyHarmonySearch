@@ -20,7 +20,7 @@ pyHarmonySearch supports both continuous and discrete variables and can take adv
 This code does not rely on any 3rd party software. It only requires Python 2.7 or higher. It may work under Python 3 using 2to3, but I haven't tested it.
 
 ## INSTALL
-Using `pip`:
+Using [http://www.pip-installer.org/](pip):
 
 	pip install pyHarmonySearch
 
