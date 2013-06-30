@@ -1,6 +1,6 @@
 # pyHarmonySearch
 
-## AUTHORS
+## AUTHOR
 Geoffrey Fairchild
 * [http://www.gfairchild.com/](http://www.gfairchild.com/)
 * [https://github.com/gfairchild](https://github.com/gfairchild)
@@ -20,7 +20,7 @@ pyHarmonySearch supports both continuous and discrete variables and can take adv
 This code does not rely on any 3rd party software. It only requires Python 2.7 or higher. It may work under Python 3 using 2to3, but I haven't tested it.
 
 ## INSTALL
-First, install pyHarmonySearch. Using `pip`:
+Using `pip`:
 
 	pip install pyHarmonySearch
 
@@ -40,19 +40,24 @@ There are three examples included, each with varying restrictions. All three exa
 	
 The output is a tuple, where the first element is the solution vector (e.g., `[0.002, -0.855]`), and the second element is the solution (e.g., `3.979`).
 
-Note that like many similar optimization algorithms, HS is stochastic in nature. Thus, you will get a slightly different result every time you run it. Because of the stochasticity, I have added the ability to run multiple iterations of HS simultaneously using [Python's multiprocessing module](http://docs.python.org/2/library/multiprocessing.html); you simply specify the number of processes on which to run the specified number of iterations. The resulting solution is the best solution found from all iterations. An optional random seed is available to allow reproducible results.
+Note that like many similar optimization algorithms, HS is stochastic, so you will get a slightly different result every time you run it. Because of the stochasticity, I have added the ability to run multiple iterations of HS simultaneously using [Python's multiprocessing module](http://docs.python.org/2/library/multiprocessing.html); you simply specify the number of processes on which to run the specified number of iterations. The resulting solution is the best solution found from all iterations. An optional random seed is available to allow reproducible results.
 
 In general, you will make use of this code in three steps:
 
 1. Implement your own objective function that inherits from `ObjectiveFunctionInterface`.
 1. Tune the various input parameters (e.g., `hms`, `hmcr`). These are problem-specific, and the numbers used in the example implementations might not be appropriate for your problem.
-1. Run HS:
+1. Run HS.
+
+It will look something like this:
 	
-	```python
-	from pyharmonysearch import harmony_search
+```python
+from pyharmonysearch import ObjectiveFunctionInterface, harmony_search
+class ObjectiveFunction(ObjectiveFunctionInterface):
+	#IMPLEMENT ME
+if __name__ == '__main__':
 	obj_fun = ObjectiveFunction()
 	print harmony_search(obj_fun, num_processes, num_iterations)
-	```
+```
 
 More documentation is provided in **harmony_search.py** and **objective_function_interface.py** and in the examples.
 
@@ -61,8 +66,8 @@ More documentation is provided in **harmony_search.py** and **objective_function
 
 HS was first introduced by Geem et al. in 2001:
 
-Z. W. Geem, J. H. Kim, and G. V Loganathan, "A New Heuristic Optimization Algorithm: Harmony Search", Simulation, vol. 76, no. 2, pp. 60-68, Feb. 2001.
-	
+Z. W. Geem, J. H. Kim, and G. V. Loganathan, "A New Heuristic Optimization Algorithm: Harmony Search," Simulation, vol. 76, no. 2, pp. 60–68, Feb. 2001.
+
 Some modifications and improvements have been suggested to the original algorithm. None of these are implemented here. This package only implements the original algorithm.
 
 * Z. W. Geem, "Improved Harmony Search from Ensemble of Music Players", in Knowledge-Based Intelligent Information and Engineering Systems, B. Gabrys, R. Howlett, and L. Jain, Eds. Springer Berlin / Heidelberg, 2006, pp. 86-93.
