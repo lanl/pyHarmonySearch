@@ -31,13 +31,13 @@ From source:
 ## USING THIS CODE
 There are four examples included. The first three examples are variations on each other that find the global maximum of a simple 2-D function. The fourth example stochastically solves a 5-D linear system of equations. Read the documentation in each example for more information.
 
-	> python continuous_seed.py
+	> python 2-D_continuous_seed.py
 	([0.00231032289834628, -0.8551231136684692], 3.9790053502149862)
-	> python discrete.py
+	> python 2-D_discrete_x.py
 	([0, -1.0018982245301231], 3.9999963967436334)
-	> python continuous_fixed_x.py
+	> python 2-D_continuous_fixed_x.py
 	([0.5, -1.0033134899758807], 3.74998902078418)
-	> python linear_system.py
+	> python 5-D_linear_system.py
 	([4.052292922336895, 1.6898107367416735, 1.1055896068620388, 4.577893112908056, 6.746541898876046], 0.9010333766161225)
 	
 The output is a tuple, where the first element is the solution vector (e.g., `[0.002, -0.855]`), and the second element is the solution (e.g., `3.979`).
