@@ -32,7 +32,7 @@ From source:
 There are four examples included. The first three examples are variations on each other that find the global maximum of a simple 2-D function. The fourth example stochastically solves a 5-D linear system of equations. Read the documentation in each example for more information.
 
 	> python 2-D_continuous_seed.py
-	([0.00231032289834628, -0.8551231136684692], 3.9790053502149862)
+	([0.0053603948140421576, -0.9787178128514525], 3.999518334677612)
 	> python 2-D_discrete_x.py
 	([0, -1.0018982245301231], 3.9999963967436334)
 	> python 2-D_continuous_fixed_x.py
@@ -40,9 +40,9 @@ There are four examples included. The first three examples are variations on eac
 	> python 5-D_linear_system.py
 	([4.052292922336895, 1.6898107367416735, 1.1055896068620388, 4.577893112908056, 6.746541898876046], 0.9010333766161225)
 	
-The output is a tuple, where the first element is the solution vector (e.g., `[0.002, -0.855]`), and the second element is the solution (e.g., `3.979`).
+The output is a tuple, where the first element is the solution vector (e.g., `[0.00536, -0.97872]`), and the second element is the solution (e.g., `3.99952`).
 
-Note that like many similar optimization algorithms, HS is stochastic, so you will get a slightly different result every time you run it. Because of the stochasticity, I have added the ability to run multiple iterations of HS simultaneously using [Python's multiprocessing module](http://docs.python.org/2/library/multiprocessing.html); you simply specify the number of processes on which to run the specified number of iterations. The resulting solution is the best solution found from all iterations. An optional random seed is available to allow reproducible results.
+Note that like many similar optimization algorithms, HS is stochastic, so you will get a slightly different result every time you run it. Because of the stochasticity, I have added the ability to run multiple iterations of HS simultaneously using [Python's multiprocessing module](http://docs.python.org/2/library/multiprocessing.html); you simply specify the number of processes on which to run the specified number of iterations. The resulting solution is the best solution found from all iterations. An optional random seed can be used to generate reproducible results.
 
 In general, you will make use of this code in three steps:
 
