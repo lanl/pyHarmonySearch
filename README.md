@@ -66,7 +66,7 @@ if __name__ == '__main__':
 More documentation is provided in **harmony_search.py** and **objective_function_interface.py** and in the examples.
 
 ## REFERENCES
-[http://harry.me/2011/05/07/neat-algorithms---harmony-search/](http://harry.me/2011/05/07/neat-algorithms---harmony-search/) provides a simple introduction on how HS works. Also, see the [HS Wikipedia entry](http://en.wikipedia.org/wiki/Harmony_search).
+[http://harry.me/blog/2011/07/05/neat-algorithms-harmony-search/](http://harry.me/blog/2011/07/05/neat-algorithms-harmony-search/) provides a simple introduction on how HS works. Also, see the [HS Wikipedia entry](http://en.wikipedia.org/wiki/Harmony_search).
 
 HS was first introduced by Geem et al. in 2001:
 
