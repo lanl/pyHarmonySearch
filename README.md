@@ -31,7 +31,7 @@ Install from source:
 	python setup.py install
 
 ## USING THIS CODE
-There are four examples included. The first three examples are variations on each other that find the global maximum of a simple 2-D function. The fourth example stochastically solves a 5-D linear system of equations. Read the documentation in each example for more information.
+There are four examples included. The first three examples ([2-D_continuous_seed.py](examples/2-D_continuous_seed.py), [2-D_discrete_x.py](examples/2-D_discrete_x.py), and [2-D_continuous_fixed_x.py](examples/2-D_continuous_fixed_x.py)) are variations on each other that find the global maximum of a simple 2-D function. The fourth example ([5-D_linear_system.py](examples/5-D_linear_system.py)) stochastically solves a 5-D linear system of equations. Read the documentation in each example for more information.
 
 	> python 2-D_continuous_seed.py
 	([0.0053603948140421576, -0.9787178128514525], 3.999518334677612)
@@ -63,7 +63,7 @@ if __name__ == '__main__':
 	print harmony_search(obj_fun, num_processes, num_iterations)
 ```
 
-More documentation is provided in **harmony_search.py** and **objective_function_interface.py** and in the examples.
+More documentation is provided in [harmony_search.py](pyharmonysearch/harmony_search.py) and [objective_function_interface.py](pyharmonysearch/objective_function_interface.py) and in the examples.
 
 ## REFERENCES
 [http://harry.me/blog/2011/07/05/neat-algorithms-harmony-search/](http://harry.me/blog/2011/07/05/neat-algorithms-harmony-search/) provides a simple introduction on how HS works. Also, see the [HS Wikipedia entry](http://en.wikipedia.org/wiki/Harmony_search).
