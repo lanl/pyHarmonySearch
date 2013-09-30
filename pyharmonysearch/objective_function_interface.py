@@ -21,6 +21,8 @@
 	THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 
+import inspect
+
 class ObjectiveFunctionInterface(object):
 	"""
 		This interface must be implemented by you. This defines the objective function HS optimizes.
@@ -36,7 +38,7 @@ class ObjectiveFunctionInterface(object):
 			>>> print obj_fun.fitness([4, 7])
 			-76
 		"""
-		raise NotImplementedError
+		raise NotImplementedError(inspect.stack()[0][3])
 
 	def get_value(self, i, j=None):
 		"""
@@ -61,7 +63,7 @@ class ObjectiveFunctionInterface(object):
 			>>> print obj_fun.get_value(2, 3)
 			3
 		"""
-		raise NotImplementedError
+		raise NotImplementedError(inspect.stack()[0][3])
 	
 	def get_index(self, i, v):
 		"""
@@ -76,7 +78,7 @@ class ObjectiveFunctionInterface(object):
 
 			For best performance, store discrete values in a sorted list that can be binary searched.
 		"""
-		raise NotImplementedError
+		raise NotImplementedError(inspect.stack()[0][3])
 	
 	def get_num_discrete_values(self, i):
 		"""
@@ -93,7 +95,7 @@ class ObjectiveFunctionInterface(object):
 			can be returned, but this function might not be implemented for continuous variables, so this shouldn't be
 			counted on.
 		"""
-		raise NotImplementedError
+		raise NotImplementedError(inspect.stack()[0][3])
 	
 	def get_lower_bound(self, i):
 		"""
@@ -105,7 +107,7 @@ class ObjectiveFunctionInterface(object):
 
 			This will only be called for continuous variables in the pitch adjustment step.
 		"""
-		raise NotImplementedError
+		raise NotImplementedError(inspect.stack()[0][3])
 	
 	def get_upper_bound(self, i):
 		"""
@@ -113,7 +115,7 @@ class ObjectiveFunctionInterface(object):
 
 			This will only be called for continuous variables in the pitch adjustment step.
 		"""
-		raise NotImplementedError
+		raise NotImplementedError(inspect.stack()[0][3])
 
 	def is_variable(self, i):
 		"""
@@ -129,7 +131,7 @@ class ObjectiveFunctionInterface(object):
 			Note that if a parameter is not variable, it should still return a valid value in get_value(). This value can be constant,
 			but a valid value must be returned.
 		"""
-		raise NotImplementedError
+		raise NotImplementedError(inspect.stack()[0][3])
 
 	def is_discrete(self, i):
 		"""
@@ -142,7 +144,7 @@ class ObjectiveFunctionInterface(object):
 			>>> print obj_fun.is_discrete(1)
 			True
 		"""
-		raise NotImplementedError
+		raise NotImplementedError(inspect.stack()[0][3])
 	
 	def get_num_parameters(self):
 		"""
@@ -152,59 +154,59 @@ class ObjectiveFunctionInterface(object):
 			>>> print obj_fun.get_num_parameters()
 			2
 		"""
-		raise NotImplementedError
+		raise NotImplementedError(inspect.stack()[0][3])
 	
 	def use_random_seed(self):
 		"""
 			Return whether or not a random seed should be used. If a random seed is used, the same result will be generated each time. 
 		"""
-		raise NotImplementedError
+		raise NotImplementedError(inspect.stack()[0][3])
 	
 	def get_random_seed(self):
 		"""
 			Return an optional random seed. If use_random_seed() == False, this won't be called.
 		"""
-		raise NotImplementedError
+		raise NotImplementedError(inspect.stack()[0][3])
 	
 	def get_max_imp(self):
 		"""
 			Return the maximum number of improvisations. This represents the stopping criterion (i.e., the number of fitness evaluations HS
 			performs until search stops).
 		"""
-		raise NotImplementedError
+		raise NotImplementedError(inspect.stack()[0][3])
 		
 	def get_hmcr(self):
 		"""
 			Return the harmony memory considering rate. This represents the proportion of memory consideration calls vs. random selection calls.
 		"""
-		raise NotImplementedError
+		raise NotImplementedError(inspect.stack()[0][3])
 		
 	def get_par(self):
 		"""
 			Return the pitch adjusting rate. This represents how often pitch adjustment will occur if memory consideration has already been done.
 		"""
-		raise NotImplementedError
+		raise NotImplementedError(inspect.stack()[0][3])
 		
 	def get_hms(self):
 		"""
 			Return the harmony memory size. This represents the size of the vector that stores previously best harmonies.
 		"""
-		raise NotImplementedError
+		raise NotImplementedError(inspect.stack()[0][3])
 		
 	def get_mpai(self):
 		"""
 			Return the maximum pitch adjustment index. This determines the range from which pitch adjustment may occur for discrete variables.
 		"""
-		raise NotImplementedError
+		raise NotImplementedError(inspect.stack()[0][3])
 	
 	def get_mpap(self):
 		"""
 			Return the maximum pitch adjustment proportion. This determines the range from which pitch adjustment may occur for continuous variables.
 		"""
-		raise NotImplementedError
+		raise NotImplementedError(inspect.stack()[0][3])
 		
 	def maximize(self):
 		"""
 			Return True if this is a maximization problem, False otherwise.
 		"""
-		raise NotImplementedError
+		raise NotImplementedError(inspect.stack()[0][3])
