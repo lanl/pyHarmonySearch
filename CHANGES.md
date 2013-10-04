@@ -1,5 +1,8 @@
 # Changes
 
+## 1.1 (TBD)
+* Moving to setuptools (using [ez_setup.py](https://bitbucket.org/pypa/setuptools/downloads/ez_setup.py) to manage it).
+
 ## 1.0.1 (2013-06-30)
 * Fixed a bug in the pitch adjustment step.
 * Added a new, more complicated, example that solves a 5-D linear system of equations.
