@@ -1,7 +1,8 @@
 # Changes
 
-## 1.1 (TBD)
+## 1.1 (2013-10-04)
 * Moving to setuptools (using [ez_setup.py](https://bitbucket.org/pypa/setuptools/downloads/ez_setup.py) to manage it).
+* `ObjectiveFunctionInterface` methods now output their name (dynamically generated using [inspect](http://docs.python.org/2/library/inspect.html)) if a `NotImplementedError` is raised.
 
 ## 1.0.1 (2013-06-30)
 * Fixed a bug in the pitch adjustment step.

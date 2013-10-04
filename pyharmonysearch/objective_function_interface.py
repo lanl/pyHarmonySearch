@@ -74,9 +74,11 @@ class ObjectiveFunctionInterface(object):
 			>>> print obj_fun.get_index(2, 6.3)
 			5
 
-			This will only be called for discrete variables in the pitch adjustment step.
+			This will only be called for discrete variables in the pitch adjustment step. The behavior here isn't well-defined in the case
+			where the possible values for a variable contain non-unique elements.
 
-			For best performance, store discrete values in a sorted list that can be binary searched.
+			For best performance, store discrete values in a sorted list that can be binary searched. Additionally, this list should not
+			contain any duplicate values.
 		"""
 		raise NotImplementedError(inspect.stack()[0][3])
 	
@@ -137,7 +139,7 @@ class ObjectiveFunctionInterface(object):
 		"""
 			Return whether or not the parameter at the specified index is a discrete parameter. Not all parameters may be continuous.
 			This only really matters in the pitch adjustment step of HS. Suppose that x is continuous (e.g., x varies in [-1000, 1000]),
-			and y is discrete (e.g., y is only allowed to take on values [-5, 3, 6, 9, 12, 45]).
+			and y is discrete (e.g., y is only allowed to take on values [-5, 3, 6, 9, 12, 45]):
 
 			>>> print obj_fun.is_discrete(0)
 			False
@@ -158,7 +160,8 @@ class ObjectiveFunctionInterface(object):
 	
 	def use_random_seed(self):
 		"""
-			Return whether or not a random seed should be used. If a random seed is used, the same result will be generated each time. 
+			Return whether or not a random seed should be used. If a random seed is used, the same result will be generated each time (i.e., multiple
+			HS iterations will return the same best solution).
 		"""
 		raise NotImplementedError(inspect.stack()[0][3])
 	
@@ -195,18 +198,20 @@ class ObjectiveFunctionInterface(object):
 		
 	def get_mpai(self):
 		"""
-			Return the maximum pitch adjustment index. This determines the range from which pitch adjustment may occur for discrete variables.
+			Return the maximum pitch adjustment index. This determines the range from which pitch adjustment may occur for discrete variables. Also known as
+			discrete bandwidth.
 		"""
 		raise NotImplementedError(inspect.stack()[0][3])
 	
 	def get_mpap(self):
 		"""
-			Return the maximum pitch adjustment proportion. This determines the range from which pitch adjustment may occur for continuous variables.
+			Return the maximum pitch adjustment proportion. This determines the range from which pitch adjustment may occur for continuous variables. Also known as
+			continuous bandwidth.
 		"""
 		raise NotImplementedError(inspect.stack()[0][3])
 		
 	def maximize(self):
 		"""
-			Return True if this is a maximization problem, False otherwise.
+			Return True if this is a maximization problem, False if minimization problem.
 		"""
 		raise NotImplementedError(inspect.stack()[0][3])
