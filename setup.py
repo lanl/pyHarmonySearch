@@ -28,7 +28,7 @@ from setuptools import setup
 
 setup(
 	name = 'pyHarmonySearch',
-	version = '1.1',
+	version = '1.2',
 	description = 'pyHarmonySearch is a pure Python implementation of the harmony search (HS) global optimization algorithm.',
 	long_description = """pyHarmonySearch is a pure Python implementation of the harmony search (HS) global optimization algorithm. HS is a metaheuristic search algorithm that, similar to simulated annealing, tabu, and evolutionary searches, is based on real world phenomena. Specifically, HS mimics a jazz band improvising together. Courtesy `Wikipedia <http://en.wikipedia.org/wiki/Harmony_search>`_:
 
@@ -51,6 +51,11 @@ For more information on pyHarmonySearch, visit the `GitHub project page <https:/
 		'License :: OSI Approved :: BSD License',
 		'Operating System :: OS Independent',
 		'Programming Language :: Python :: 2.7',
+		'Programming Language :: Python :: 3',
+		'Programming Language :: Python :: 3.0',
+		'Programming Language :: Python :: 3.1',
+		'Programming Language :: Python :: 3.2',
+		'Programming Language :: Python :: 3.3',
 		'Topic :: Scientific/Engineering :: Artificial Intelligence',
 		],
 	packages = [

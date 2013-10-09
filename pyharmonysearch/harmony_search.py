@@ -22,15 +22,7 @@
 """
 
 import random
-from multiprocessing import Pool
-import signal
-
-def init_worker():
-	"""
-		Each worker will be instructed to ignore keyboard interruptions (i.e., CTRL+C). Note that workers won't stop right away because Pool.join()
-		can't be interrupted. This is a hack to prevent the main process from hanging.
-	"""
-	signal.signal(signal.SIGINT, signal.SIG_IGN)
+from multiprocessing import Pool, Event
 
 def harmony_search(objective_function, num_processes, num_iterations):
 	"""
@@ -38,27 +30,45 @@ def harmony_search(objective_function, num_processes, num_iterations):
 		multiple runs can find different results. Here, we run the specified number of iterations on the specified number of processes
 		and return a tuple: (solution_vector, fitness)
 	"""
-	pool = Pool(num_processes, init_worker)
-	results = [pool.apply_async(worker, args=(objective_function,)) for i in xrange(num_iterations)]
-	pool.close() #no more tasks will be submitted to the pool
-	pool.join() #wait for all tasks to finish before moving on
+	terminating_event = Event()
+	pool = Pool(num_processes, initializer=initializer, initargs=(terminating_event,))
+	try:
+		results = [pool.apply_async(worker, args=(objective_function,)) for i in range(num_iterations)]
+		pool.close() #no more tasks will be submitted to the pool
+		pool.join() #wait for all tasks to finish before moving on
 	
-	#find best harmony from all iterations and output
-	best_harmony = None
-	best_fitness = float('-inf') if objective_function.maximize() else float('+inf')
-	for result in results:
-		harmony, fitness = result.get() #multiprocessing.pool.AsyncResult is returned for each process, so we need to call get() to pull out the value
-		if (objective_function.maximize() and fitness > best_fitness) or (not objective_function.maximize() and fitness < best_fitness):
-			best_harmony = harmony
-			best_fitness = fitness
-	return best_harmony, best_fitness
+		#find best harmony from all iterations and output
+		best_harmony = None
+		best_fitness = float('-inf') if objective_function.maximize() else float('+inf')
+		for result in results:
+			harmony, fitness = result.get() #multiprocessing.pool.AsyncResult is returned for each process, so we need to call get() to pull out the value
+			if (objective_function.maximize() and fitness > best_fitness) or (not objective_function.maximize() and fitness < best_fitness):
+				best_harmony = harmony
+				best_fitness = fitness
+		return best_harmony, best_fitness
+	except KeyboardInterrupt:
+		pool.terminate()
+
+def initializer(terminating_event):
+	"""
+		This guy uses a global multiprocessing.Event to prevent new processes from spawning after a KeyboardInterrupt is first caught. This idea comes
+		from http://stackoverflow.com/questions/14579474/multiprocessing-pool-spawning-new-childern-after-terminate-on-linux-python2-7.
+	"""
+	global terminating
+	terminating = terminating_event
 	
 def worker(objective_function):
 	"""
-		This is just a dummy function to make multiprocessing work with a class.
+		This is just a dummy function to make multiprocessing work with a class. It also checks/sets the global multiprocessing.Event to prevent
+		new processes from starting work on a KeyboardInterrupt.
 	"""
-	hs = HarmonySearch(objective_function)
-	return hs.run()
+	try:
+		if not terminating.is_set():
+			hs = HarmonySearch(objective_function)
+			return hs.run()
+	except KeyboardInterrupt:
+		terminating.set() #set the Event to true to prevent the other processes from doing any work
+		return
 
 class HarmonySearch(object):
 	"""
@@ -95,7 +105,7 @@ class HarmonySearch(object):
 		while(num_imp < self._obj_fun.get_max_imp()):
 			#generate new harmony
 			solution_vector = list()
-			for i in xrange(0, self._obj_fun.get_num_parameters()):
+			for i in range(0, self._obj_fun.get_num_parameters()):
 				if random.random() < self._obj_fun.get_hmcr():
 					self._memory_consideration(solution_vector, i)
 					if random.random() < self._obj_fun.get_par():
@@ -123,9 +133,9 @@ class HarmonySearch(object):
 			that we aren't actually doing any matrix operations, so a library like NumPy isn't necessary here. The matrix
 			merely stores previous harmonies.
 		"""
-		for i in xrange(0, self._obj_fun.get_hms()):
+		for i in range(0, self._obj_fun.get_hms()):
 			solution_vector = list()
-			for j in xrange(0, self._obj_fun.get_num_parameters()):
+			for j in range(0, self._obj_fun.get_num_parameters()):
 				self._random_selection(solution_vector, j)
 			solution_vector.append(self._obj_fun.get_fitness(solution_vector))
 			self._harmony_memory.append(solution_vector)

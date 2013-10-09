@@ -44,7 +44,7 @@ class ObjectiveFunction(ObjectiveFunctionInterface):
 		self._lower_bounds = [None, -1000]
 		self._upper_bounds = [None, 1000]
 		self._variable = [True, True]
-		self._discrete_values = [[x for x in xrange(-100, 101)], None]
+		self._discrete_values = [[x for x in range(-100, 101)], None]
 		
 		#define all input parameters
 		self._maximize = True #do we maximize or minimize?
@@ -135,4 +135,4 @@ if __name__ == '__main__':
 	obj_fun = ObjectiveFunction()
 	num_processes = cpu_count() #use number of logical CPUs
 	num_iterations = num_processes * 5 #each process does 5 iterations
-	print harmony_search(obj_fun, num_processes, num_iterations)
+	print(harmony_search(obj_fun, num_processes, num_iterations))

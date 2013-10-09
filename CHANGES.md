@@ -1,5 +1,9 @@
 # Changes
 
+## 1.2 (2013-10-09)
+* pyHarmonySearch is now fully Python 3+ compliant.
+* `KeyboardInterrupt` is now properly handled.
+
 ## 1.1 (2013-10-04)
 * Moving to setuptools (using [ez_setup.py](https://bitbucket.org/pypa/setuptools/downloads/ez_setup.py) to manage it).
 * `ObjectiveFunctionInterface` methods now output their name (dynamically generated using [inspect](http://docs.python.org/2/library/inspect.html)) if a `NotImplementedError` is raised.

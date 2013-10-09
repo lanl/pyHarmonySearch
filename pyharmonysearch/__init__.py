@@ -21,5 +21,5 @@
 	THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 
-from harmony_search import harmony_search, HarmonySearch
-from objective_function_interface import ObjectiveFunctionInterface
+from .harmony_search import harmony_search, HarmonySearch
+from .objective_function_interface import ObjectiveFunctionInterface

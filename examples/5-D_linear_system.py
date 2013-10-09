@@ -127,4 +127,4 @@ if __name__ == '__main__':
 	obj_fun = ObjectiveFunction()
 	num_processes = cpu_count() - 1 #use number of logical CPUs - 1 so that I have one available for use
 	num_iterations = num_processes #each process does 1 iterations
-	print harmony_search(obj_fun, num_processes, num_iterations)
+	print(harmony_search(obj_fun, num_processes, num_iterations))
