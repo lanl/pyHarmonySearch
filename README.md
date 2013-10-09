@@ -17,7 +17,7 @@ pyHarmonySearch is a pure Python implementation of the harmony search (HS) globa
 pyHarmonySearch supports both continuous and discrete variables and can take advantage of parallel processing using [Python's multiprocessing module](http://docs.python.org/2/library/multiprocessing.html).
 
 ## REQUIREMENTS
-This code does not rely on any 3rd party software. It only requires Python 2.7 or higher. It likely works under Python 3 using 2to3, but I haven't tested it.
+This code does not rely on any 3rd party software. It only requires Python 2.7 or higher.
 
 ## INSTALL
 pyHarmonySearch is available on PyPI at https://pypi.python.org/pypi/pyHarmonySearch.
