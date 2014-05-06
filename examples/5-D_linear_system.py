@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 """
 	Copyright (c) 2013, Los Alamos National Security, LLC
 	All rights reserved.
@@ -58,6 +60,8 @@ class ObjectiveFunction(ObjectiveFunctionInterface):
 		Thus, we've found the optimal solution if the fitness is zero.
 		
 		The solution is A = 7.805, B = 1.895, C = 0.745, D = 3.069, E = 9.744.
+
+		Warning: Stochastically solving a linear system is dumb. This is just a toy example.
 	"""
 
 	def __init__(self):
