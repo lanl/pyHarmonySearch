@@ -57,6 +57,7 @@ For more information on pyHarmonySearch, visit the `GitHub project page <https:/
 		'Programming Language :: Python :: 3.1',
 		'Programming Language :: Python :: 3.2',
 		'Programming Language :: Python :: 3.3',
+		'Programming Language :: Python :: 3.4',
 		'Topic :: Scientific/Engineering :: Artificial Intelligence',
 		],
 	packages = [
