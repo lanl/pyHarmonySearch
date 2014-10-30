@@ -34,7 +34,7 @@ setup(
 
     In the HS algorithm, each musician (= decision variable) plays (= generates) a note (= a value) for finding a best harmony (= global optimum) all together.
 
-pyHarmonySearch supports both continuous and discrete variables and can take advantage of parallel processing using `Python's built-in multiprocessing module <http://docs.python.org/2/library/multiprocessing.html>`_.
+pyHarmonySearch supports both continuous and discrete variables and can take advantage of parallel processing using `Python's built-in multiprocessing module <http://docs.python.org/3.4/library/multiprocessing.html>`_.
 
 For more information on pyHarmonySearch, visit the `GitHub project page <https://github.com/gfairchild/pyHarmonySearch>`_.""",
     author='Geoffrey Fairchild',
