@@ -14,7 +14,7 @@ pyHarmonySearch is a pure Python implementation of the harmony search (HS) globa
 
 > In the HS algorithm, each musician (= decision variable) plays (= generates) a note (= a value) for finding a best harmony (= global optimum) all together.
 
-pyHarmonySearch supports both continuous and discrete variables and can take advantage of parallel processing using [Python's multiprocessing module](http://docs.python.org/2/library/multiprocessing.html).
+pyHarmonySearch supports both continuous and discrete variables and can take advantage of parallel processing using [Python's multiprocessing module](http://docs.python.org/3.4/library/multiprocessing.html).
 
 ## REQUIREMENTS
 This code does not rely on any 3rd party software. It only requires Python 2.7 or higher.
@@ -33,18 +33,26 @@ Install from source:
 ## USING THIS CODE
 There are four examples included. The first three examples ([2-D_continuous_seed.py](examples/2-D_continuous_seed.py), [2-D_discrete_x.py](examples/2-D_discrete_x.py), and [2-D_continuous_fixed_x.py](examples/2-D_continuous_fixed_x.py)) are variations on each other that find the global maximum of a simple 2-D function. The fourth example ([5-D_linear_system.py](examples/5-D_linear_system.py)) stochastically solves a 5-D linear system of equations. Read the documentation in each example for more information.
 
-    > python 2-D_continuous_seed.py
-    ([0.0053603948140421576, -0.9787178128514525], 3.999518334677612)
-    > python 2-D_discrete_x.py
-    ([0, -1.0018982245301231], 3.9999963967436334)
-    > python 2-D_continuous_fixed_x.py
-    ([0.5, -1.0033134899758807], 3.74998902078418)
-    > python 5-D_linear_system.py
-    ([4.052292922336895, 1.6898107367416735, 1.1055896068620388, 4.577893112908056, 6.746541898876046], 0.9010333766161225)
+    > ./2-D_continuous_fixed_x.py
+    Elapsed time: 0:00:23.396807
+    Best harmony: [0.5, -1.0001700408343779]
+    Best fitness: 3.7499999710861145
+    > ./2-D_continuous_seed.py
+    Elapsed time: 0:00:03.119576
+    Best harmony: [0.027035817109283933, -0.9950109785422445]
+    Best fitness: 3.9992441742581275
+    > ./2-D_discrete_x.py
+    Elapsed time: 0:00:30.877592
+    Best harmony: [0, -0.9987024210158837]
+    Best fitness: 3.9999983162887798
+    > ./5-D_linear_system.py
+    Elapsed time: 0:02:29.715337
+    Best harmony: [8.118886532259536, 2.0254098515892665, 0.6678692319283357, 2.906307072622585, 9.814436850217918]
+    Best fitness: 0.8690865628414204
     
-The output is a tuple, where the first element is the solution vector (e.g., `[0.00536, -0.97872]`), and the second element is the solution (e.g., `3.99952`).
+An instance of `HarmonySearchResults` is returned. Currently, 3 attributes are attached: `elapsed_time`, `best_harmony`, and `best_fitness`.
 
-Note that like many similar optimization algorithms, HS is stochastic, so you will get a slightly different result every time you run it. Because of the stochasticity, I have added the ability to run multiple iterations of HS simultaneously using [Python's multiprocessing module](http://docs.python.org/2/library/multiprocessing.html); you simply specify the number of processes on which to run the specified number of iterations. The resulting solution is the best solution found from all iterations. An optional random seed can be used to generate reproducible results.
+Note that like many similar optimization algorithms, HS is stochastic, so you will get a slightly different result every time you run it. Because of the stochasticity, I have added the ability to run multiple iterations of HS simultaneously using [Python's multiprocessing module](http://docs.python.org/3.4/library/multiprocessing.html); you simply specify the number of processes on which to run the specified number of iterations. The resulting solution is the best solution found from all iterations. An optional random seed can be used to generate reproducible results.
 
 In general, you will make use of this code in three steps:
 
@@ -60,7 +68,7 @@ class ObjectiveFunction(ObjectiveFunctionInterface):
     #IMPLEMENT ME
 if __name__ == '__main__':
     obj_fun = ObjectiveFunction()
-    print harmony_search(obj_fun, num_processes, num_iterations)
+    print(harmony_search(obj_fun, num_processes, num_iterations))
 ```
 
 More documentation is provided in [harmony_search.py](pyharmonysearch/harmony_search.py) and [objective_function_interface.py](pyharmonysearch/objective_function_interface.py) and in the examples.

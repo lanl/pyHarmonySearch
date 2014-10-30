@@ -1,5 +1,8 @@
 # Changes
 
+## 1.3 (2014-10-30)
+* An empty struct-like class, `HarmonySearchResults`, is now used to return search results for more flexibility/clarity.
+
 ## 1.2 (2013-10-09)
 * pyHarmonySearch is now fully Python 3+ compliant.
 * `KeyboardInterrupt` is now properly handled.

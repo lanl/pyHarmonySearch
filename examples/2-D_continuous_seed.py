@@ -40,6 +40,8 @@ class ObjectiveFunction(ObjectiveFunctionInterface):
             The maximum is 4 at (0, -1).
 
         Note that since all variables are continuous, we don't actually need to implement get_index() and get_num_discrete_values().
+
+        Warning: Stochastically solving a linear system is dumb. This is just a toy example.
     """
 
     def __init__(self):

@@ -23,11 +23,28 @@
 
 import random
 from multiprocessing import Pool, Event
+import datetime
 
 # Note: We use a global multiprocessing.Event to deal with a KeyboardInterrupt. This idea comes from
 # http://stackoverflow.com/questions/14579474/multiprocessing-pool-spawning-new-childern-after-terminate-on-linux-python2-7.
 # This is not necessary when running under Python 3, but to keep 2.7 compatability, I'm leaving it in.
 terminating = Event()
+
+
+class HarmonySearchResults(object):
+
+    """
+        This is a struct-like class that will be returned upon successful completion of the search. This allows for much more flexibility
+        for the search results. For example, we could easily attach the harmony memories if we wanted that information.
+
+        Current attributes used:
+            elapsed_time - A datetime.timedelta representing the total search time.
+            best_harmony - The best solution vector found.
+            best_fitness - The best objective function value found.
+    """
+
+    def __str__(self):
+        return 'Elapsed time: %s\nBest harmony: %s\nBest fitness: %s' % (self.elapsed_time, self.best_harmony, self.best_fitness)
 
 
 def harmony_search(objective_function, num_processes, num_iterations):
@@ -38,19 +55,27 @@ def harmony_search(objective_function, num_processes, num_iterations):
     """
     pool = Pool(num_processes)
     try:
-        results = [pool.apply_async(worker, args=(objective_function,)) for i in range(num_iterations)]
+        start = datetime.datetime.now()
+        pool_results = [pool.apply_async(worker, args=(objective_function,)) for i in range(num_iterations)]
         pool.close()  # no more tasks will be submitted to the pool
         pool.join()  # wait for all tasks to finish before moving on
+        end = datetime.datetime.now()
+
+        hs_results = HarmonySearchResults()
+        hs_results.elapsed_time = end - start
 
         # find best harmony from all iterations and output
         best_harmony = None
         best_fitness = float('-inf') if objective_function.maximize() else float('+inf')
-        for result in results:
+        for result in pool_results:
             harmony, fitness = result.get()  # multiprocessing.pool.AsyncResult is returned for each process, so we need to call get() to pull out the value
             if (objective_function.maximize() and fitness > best_fitness) or (not objective_function.maximize() and fitness < best_fitness):
                 best_harmony = harmony
                 best_fitness = fitness
-        return best_harmony, best_fitness
+
+        hs_results.best_harmony = best_harmony
+        hs_results.best_fitness = best_fitness
+        return hs_results
     except KeyboardInterrupt:
         pool.terminate()
 

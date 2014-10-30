@@ -42,6 +42,8 @@ class ObjectiveFunction(ObjectiveFunctionInterface):
 
         In this implementation, x is a discrete variable with choices ranging from -100 to 100 in increments of 1.
         y is still a continuous variable.
+
+        Warning: Stochastically solving a linear system is dumb. This is just a toy example.
     """
 
     def __init__(self):

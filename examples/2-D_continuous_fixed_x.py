@@ -40,8 +40,9 @@ class ObjectiveFunction(ObjectiveFunctionInterface):
             maximize -(x^2 + (y+1)^2) + 4
             The maximum is 4 at (0, -1). However, when x is fixed at 0.5, the maximum is 3.75 at (0.5, -1).
 
-        Note that since all variables are continuous, we don't actually need to implement get_index()
-        and get_num_discrete_values().
+        Note that since all variables are continuous, we don't actually need to implement get_index() and get_num_discrete_values().
+
+        Warning: Stochastically solving a linear system is dumb. This is just a toy example.
     """
 
     def __init__(self):
