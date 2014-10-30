@@ -24,6 +24,11 @@
 import random
 from multiprocessing import Pool, Event
 
+# Note: We use a global multiprocessing.Event to deal with a KeyboardInterrupt. This idea comes from
+# http://stackoverflow.com/questions/14579474/multiprocessing-pool-spawning-new-childern-after-terminate-on-linux-python2-7.
+# This is not necessary when running under Python 3, but to keep 2.7 compatability, I'm leaving it in.
+terminating = Event()
+
 
 def harmony_search(objective_function, num_processes, num_iterations):
     """
@@ -31,8 +36,7 @@ def harmony_search(objective_function, num_processes, num_iterations):
         multiple runs can find different results. Here, we run the specified number of iterations on the specified number of processes
         and return a tuple: (solution_vector, fitness)
     """
-    terminating_event = Event()
-    pool = Pool(num_processes, initializer=initializer, initargs=(terminating_event,))
+    pool = Pool(num_processes)
     try:
         results = [pool.apply_async(worker, args=(objective_function,)) for i in range(num_iterations)]
         pool.close()  # no more tasks will be submitted to the pool
@@ -49,15 +53,6 @@ def harmony_search(objective_function, num_processes, num_iterations):
         return best_harmony, best_fitness
     except KeyboardInterrupt:
         pool.terminate()
-
-
-def initializer(terminating_event):
-    """
-        This guy uses a global multiprocessing.Event to prevent new processes from spawning after a KeyboardInterrupt is first caught. This idea comes
-        from http://stackoverflow.com/questions/14579474/multiprocessing-pool-spawning-new-childern-after-terminate-on-linux-python2-7.
-    """
-    global terminating
-    terminating = terminating_event
 
 
 def worker(objective_function):
