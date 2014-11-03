@@ -40,8 +40,8 @@ HarmonySearchResults = namedtuple('HarmonySearchResults', ['elapsed_time', 'best
 def harmony_search(objective_function, num_processes, num_iterations):
     """
         Here, we use multiprocessing.Pool to do multiple harmony searches simultaneously. Since HS is stochastic (unless random_seed is set),
-        multiple runs can find different results. Here, we run the specified number of iterations on the specified number of processes
-        and return a tuple: (solution_vector, fitness)
+        multiple runs can find different results. We run the specified number of iterations on the specified number of processes and return
+        an instance of HarmonySearchResults.
     """
     pool = Pool(num_processes)
     try:
@@ -52,7 +52,7 @@ def harmony_search(objective_function, num_processes, num_iterations):
         end = datetime.datetime.now()
         elapsed_time = end - start
 
-        # find best harmony from all iterations and output
+        # find best harmony from all iterations
         best_harmony = None
         best_fitness = float('-inf') if objective_function.maximize() else float('+inf')
         for result in pool_results:
@@ -114,27 +114,27 @@ class HarmonySearch(object):
         num_imp = 0
         while(num_imp < self._obj_fun.get_max_imp()):
             # generate new harmony
-            solution_vector = list()
+            harmony = list()
             for i in range(0, self._obj_fun.get_num_parameters()):
                 if random.random() < self._obj_fun.get_hmcr():
-                    self._memory_consideration(solution_vector, i)
+                    self._memory_consideration(harmony, i)
                     if random.random() < self._obj_fun.get_par():
-                        self._pitch_adjustment(solution_vector, i)
+                        self._pitch_adjustment(harmony, i)
                 else:
-                    self._random_selection(solution_vector, i)
-            solution_vector.append(self._obj_fun.get_fitness(solution_vector))
+                    self._random_selection(harmony, i)
+            fitness = self._obj_fun.get_fitness(harmony)
 
-            self._update_harmony_memory(solution_vector)
+            self._update_harmony_memory(harmony, fitness)
 
             num_imp += 1
 
         # return best harmony
         best_harmony = None
         best_fitness = float('-inf') if self._obj_fun.maximize() else float('+inf')
-        for harmony in self._harmony_memory:
-            if (self._obj_fun.maximize() and harmony[-1] > best_fitness) or (not self._obj_fun.maximize() and harmony[-1] < best_fitness):
-                best_harmony = harmony[:-1]
-                best_fitness = harmony[-1]
+        for harmony, fitness in self._harmony_memory:
+            if (self._obj_fun.maximize() and fitness > best_fitness) or (not self._obj_fun.maximize() and fitness < best_fitness):
+                best_harmony = harmony
+                best_fitness = fitness
         return best_harmony, best_fitness
 
     def _initialize(self):
@@ -144,27 +144,27 @@ class HarmonySearch(object):
             merely stores previous harmonies.
         """
         for i in range(0, self._obj_fun.get_hms()):
-            solution_vector = list()
+            harmony = list()
             for j in range(0, self._obj_fun.get_num_parameters()):
-                self._random_selection(solution_vector, j)
-            solution_vector.append(self._obj_fun.get_fitness(solution_vector))
-            self._harmony_memory.append(solution_vector)
+                self._random_selection(harmony, j)
+            fitness = self._obj_fun.get_fitness(harmony)
+            self._harmony_memory.append((harmony, fitness))
 
-    def _random_selection(self, solution_vector, i):
+    def _random_selection(self, harmony, i):
         """
             Choose a note according to get_value(). Remember that even if a note is not variable, get_value() must still
             return a valid value.
         """
-        solution_vector.append(self._obj_fun.get_value(i))
+        harmony.append(self._obj_fun.get_value(i))
 
-    def _memory_consideration(self, solution_vector, i):
+    def _memory_consideration(self, harmony, i):
         """
             Randomly choose a note previously played.
         """
         memory_index = random.randint(0, self._obj_fun.get_hms() - 1)
-        solution_vector.append(self._harmony_memory[memory_index][i])
+        harmony.append(self._harmony_memory[memory_index][0][i])
 
-    def _pitch_adjustment(self, solution_vector, i):
+    def _pitch_adjustment(self, harmony, i):
         """
             If variable, randomly adjust the pitch up or down by some amount. This is the only place in the algorithm where there
             is an explicit difference between continuous and discrete variables.
@@ -179,34 +179,34 @@ class HarmonySearch(object):
         """
         if(self._obj_fun.is_variable(i)):
             if self._obj_fun.is_discrete(i):
-                current_index = self._obj_fun.get_index(i, solution_vector[i])
+                current_index = self._obj_fun.get_index(i, harmony[i])
                 # discrete variable
                 if random.random() < 0.5:
                     # adjust pitch down
-                    solution_vector[i] = self._obj_fun.get_value(i, current_index - random.randint(0, min(self._obj_fun.get_mpai(), current_index)))
+                    harmony[i] = self._obj_fun.get_value(i, current_index - random.randint(0, min(self._obj_fun.get_mpai(), current_index)))
                 else:
                     # adjust pitch up
-                    solution_vector[i] = self._obj_fun.get_value(i, current_index + random.randint(0, min(self._obj_fun.get_mpai(), self._obj_fun.get_num_discrete_values(i) - current_index - 1)))
+                    harmony[i] = self._obj_fun.get_value(i, current_index + random.randint(0, min(self._obj_fun.get_mpai(), self._obj_fun.get_num_discrete_values(i) - current_index - 1)))
             else:
                 # continuous variable
                 if random.random() < 0.5:
                     # adjust pitch down
-                    solution_vector[i] -= (solution_vector[i] - self._obj_fun.get_lower_bound(i)) * random.random() * self._obj_fun.get_mpap()
+                    harmony[i] -= (harmony[i] - self._obj_fun.get_lower_bound(i)) * random.random() * self._obj_fun.get_mpap()
                 else:
                     # adjust pitch up
-                    solution_vector[i] += (self._obj_fun.get_upper_bound(i) - solution_vector[i]) * random.random() * self._obj_fun.get_mpap()
+                    harmony[i] += (self._obj_fun.get_upper_bound(i) - harmony[i]) * random.random() * self._obj_fun.get_mpap()
 
-    def _update_harmony_memory(self, solution_vector):
+    def _update_harmony_memory(self, considered_harmony, considered_fitness):
         """
             Update the harmony memory if necessary with the given harmony. If the given harmony is better than the worst
             harmony in memory, replace it. This function doesn't allow duplicate harmonies in memory.
         """
-        if solution_vector not in self._harmony_memory:
+        if (considered_harmony, considered_fitness) not in self._harmony_memory:
             worst_index = None
             worst_fitness = float('+inf') if self._obj_fun.maximize() else float('-inf')
-            for i, harmony in enumerate(self._harmony_memory):
-                if (self._obj_fun.maximize() and harmony[-1] < worst_fitness) or (not self._obj_fun.maximize() and harmony[-1] > worst_fitness):
+            for i, (harmony, fitness) in enumerate(self._harmony_memory):
+                if (self._obj_fun.maximize() and fitness < worst_fitness) or (not self._obj_fun.maximize() and fitness > worst_fitness):
                     worst_index = i
-                    worst_fitness = harmony[-1]
-            if (self._obj_fun.maximize() and solution_vector[-1] > worst_fitness) or (not self._obj_fun.maximize() and solution_vector[-1] < worst_fitness):
-                self._harmony_memory[worst_index] = solution_vector
+                    worst_fitness = fitness
+            if (self._obj_fun.maximize() and considered_fitness > worst_fitness) or (not self._obj_fun.maximize() and considered_fitness < worst_fitness):
+                self._harmony_memory[worst_index] = (considered_harmony, considered_fitness)

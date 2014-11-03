@@ -1,5 +1,8 @@
 # Changes
 
+## 1.3.2 (2014-11-03)
+* For clarity, the harmony memory now remembers `(harmony, fitness)` tuples instead of a single array with the fitness appended to the end.
+
 ## 1.3.1 (2014-11-03)
 * `HarmonySearchResults` is now a [namedtuple](https://docs.python.org/3/library/collections.html#collections.namedtuple) instead of a class.
 
