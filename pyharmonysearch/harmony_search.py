@@ -23,7 +23,7 @@
 
 import random
 from multiprocessing import Pool, Event
-import datetime
+from datetime import datetime
 from collections import namedtuple
 
 # Note: We use a global multiprocessing.Event to deal with a KeyboardInterrupt. This idea comes from
@@ -45,11 +45,11 @@ def harmony_search(objective_function, num_processes, num_iterations):
     """
     pool = Pool(num_processes)
     try:
-        start = datetime.datetime.now()
+        start = datetime.now()
         pool_results = [pool.apply_async(worker, args=(objective_function,)) for i in range(num_iterations)]
         pool.close()  # no more tasks will be submitted to the pool
         pool.join()  # wait for all tasks to finish before moving on
-        end = datetime.datetime.now()
+        end = datetime.now()
         elapsed_time = end - start
 
         # find best harmony from all iterations
