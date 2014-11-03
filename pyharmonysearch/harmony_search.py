@@ -24,27 +24,17 @@
 import random
 from multiprocessing import Pool, Event
 import datetime
+from collections import namedtuple
 
 # Note: We use a global multiprocessing.Event to deal with a KeyboardInterrupt. This idea comes from
 # http://stackoverflow.com/questions/14579474/multiprocessing-pool-spawning-new-childern-after-terminate-on-linux-python2-7.
 # This is not necessary when running under Python 3, but to keep 2.7 compatability, I'm leaving it in.
 terminating = Event()
 
-
-class HarmonySearchResults(object):
-
-    """
-        This is a struct-like class that will be returned upon successful completion of the search. This allows for much more flexibility
-        for the search results. For example, we could easily attach the harmony memories if we wanted that information.
-
-        Current attributes used:
-            elapsed_time - A datetime.timedelta representing the total search time.
-            best_harmony - The best solution vector found.
-            best_fitness - The best objective function value found.
-    """
-
-    def __str__(self):
-        return 'Elapsed time: %s\nBest harmony: %s\nBest fitness: %s' % (self.elapsed_time, self.best_harmony, self.best_fitness)
+# HarmonySearchResults is a struct-like object that we'll use to attach the results of the search.
+# namedtuples are lightweight and trivial to extend should more results be desired in the future. Right now, we're just
+# keeping track of the total elapsed clock time, the best harmony found, and the fitness for that harmony.
+HarmonySearchResults = namedtuple('HarmonySearchResults', ['elapsed_time', 'best_harmony', 'best_fitness'])
 
 
 def harmony_search(objective_function, num_processes, num_iterations):
@@ -60,9 +50,7 @@ def harmony_search(objective_function, num_processes, num_iterations):
         pool.close()  # no more tasks will be submitted to the pool
         pool.join()  # wait for all tasks to finish before moving on
         end = datetime.datetime.now()
-
-        hs_results = HarmonySearchResults()
-        hs_results.elapsed_time = end - start
+        elapsed_time = end - start
 
         # find best harmony from all iterations and output
         best_harmony = None
@@ -73,9 +61,7 @@ def harmony_search(objective_function, num_processes, num_iterations):
                 best_harmony = harmony
                 best_fitness = fitness
 
-        hs_results.best_harmony = best_harmony
-        hs_results.best_fitness = best_fitness
-        return hs_results
+        return HarmonySearchResults(elapsed_time=elapsed_time, best_harmony=best_harmony, best_fitness=best_fitness)
     except KeyboardInterrupt:
         pool.terminate()
 
@@ -91,7 +77,6 @@ def worker(objective_function):
             return hs.run()
     except KeyboardInterrupt:
         terminating.set()  # set the Event to true to prevent the other processes from doing any work
-        return
 
 
 class HarmonySearch(object):
@@ -101,7 +86,7 @@ class HarmonySearch(object):
 
         1. Implement an objective function that inherits from ObjectiveFunctionInterface.
         2. Initialize HarmonySearch with this objective function (e.g., hs = HarmonySearch(objective_function)).
-        3. Run HarmonySearch (e.g., solution_vector, solution = hs.run()).
+        3. Run HarmonySearch (e.g., results = hs.run()).
     """
 
     def __init__(self, objective_function):

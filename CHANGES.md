@@ -1,5 +1,8 @@
 # Changes
 
+## 1.3.1 (2014-11-03)
+* `HarmonySearchResults` is now a [namedtuple](https://docs.python.org/3/library/collections.html#collections.namedtuple) instead of a class.
+
 ## 1.3 (2014-10-30)
 * An empty struct-like class, `HarmonySearchResults`, is now used to return search results for more flexibility/clarity.
 

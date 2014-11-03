@@ -50,7 +50,7 @@ There are four examples included. The first three examples ([2-D_continuous_seed
     Best harmony: [8.118886532259536, 2.0254098515892665, 0.6678692319283357, 2.906307072622585, 9.814436850217918]
     Best fitness: 0.8690865628414204
     
-An instance of `HarmonySearchResults` is returned. Currently, 3 attributes are attached: `elapsed_time`, `best_harmony`, and `best_fitness`.
+`HarmonySearchResults`, a [namedtuple](https://docs.python.org/3/library/collections.html#collections.namedtuple), is returned. Currently, only 3 fields are attached: `elapsed_time`, `best_harmony`, and `best_fitness`.
 
 Note that like many similar optimization algorithms, HS is stochastic, so you will get a slightly different result every time you run it. Because of the stochasticity, I have added the ability to run multiple iterations of HS simultaneously using [Python's multiprocessing module](http://docs.python.org/3.4/library/multiprocessing.html); you simply specify the number of processes on which to run the specified number of iterations. The resulting solution is the best solution found from all iterations. An optional random seed can be used to generate reproducible results.
 
@@ -68,7 +68,10 @@ class ObjectiveFunction(ObjectiveFunctionInterface):
     #IMPLEMENT ME
 if __name__ == '__main__':
     obj_fun = ObjectiveFunction()
-    print(harmony_search(obj_fun, num_processes, num_iterations))
+    num_processes = cpu_count()  # use number of logical CPUs
+    num_iterations = num_processes * 5  # each process does 5 iterations
+    results = harmony_search(obj_fun, num_processes, num_iterations)
+    print('Elapsed time: %s\nBest harmony: %s\nBest fitness: %s' % (results.elapsed_time, results.best_harmony, results.best_fitness))
 ```
 
 More documentation is provided in [harmony_search.py](pyharmonysearch/harmony_search.py) and [objective_function_interface.py](pyharmonysearch/objective_function_interface.py) and in the examples.
