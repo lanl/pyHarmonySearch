@@ -120,4 +120,4 @@ if __name__ == '__main__':
     num_processes = 1
     num_iterations = 1  # because random_seed is defined, there's no point in running this multiple times
     results = harmony_search(obj_fun, num_processes, num_iterations)
-    print('Elapsed time: %s\nBest harmony: %s\nBest fitness: %s' % (results.elapsed_time, results.best_harmony, results.best_fitness))
+    print('Elapsed time: {}\nBest harmony: {}\nBest fitness: {}'.format(results.elapsed_time, results.best_harmony, results.best_fitness))

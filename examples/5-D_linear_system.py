@@ -134,4 +134,4 @@ if __name__ == '__main__':
     num_processes = cpu_count() - 1  # use number of logical CPUs - 1 so that I have one available for use
     num_iterations = num_processes  # each process does 1 iterations
     results = harmony_search(obj_fun, num_processes, num_iterations)
-    print('Elapsed time: %s\nBest harmony: %s\nBest fitness: %s' % (results.elapsed_time, results.best_harmony, results.best_fitness))
+    print('Elapsed time: {}\nBest harmony: {}\nBest fitness: {}'.format(results.elapsed_time, results.best_harmony, results.best_fitness))

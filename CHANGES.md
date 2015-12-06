@@ -1,5 +1,8 @@
 # Changes
 
+## 1.3.3 (2015-12-05)
+* `HarmonySearchResults` now also stores the last complete harmony memory from each run.
+
 ## 1.3.2 (2014-11-03)
 * For clarity, the harmony memory now remembers `(harmony, fitness)` tuples instead of a single array with the fitness appended to the end.
 

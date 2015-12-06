@@ -33,8 +33,9 @@ terminating = Event()
 
 # HarmonySearchResults is a struct-like object that we'll use to attach the results of the search.
 # namedtuples are lightweight and trivial to extend should more results be desired in the future. Right now, we're just
-# keeping track of the total elapsed clock time, the best harmony found, and the fitness for that harmony.
-HarmonySearchResults = namedtuple('HarmonySearchResults', ['elapsed_time', 'best_harmony', 'best_fitness'])
+# keeping track of the total elapsed clock time, the best harmony found, the fitness for that harmony, and the harmony memory,
+# which allows you to see the top harmonies.
+HarmonySearchResults = namedtuple('HarmonySearchResults', ['elapsed_time', 'best_harmony', 'best_fitness', 'harmony_memories'])
 
 
 def harmony_search(objective_function, num_processes, num_iterations):
@@ -55,13 +56,15 @@ def harmony_search(objective_function, num_processes, num_iterations):
         # find best harmony from all iterations
         best_harmony = None
         best_fitness = float('-inf') if objective_function.maximize() else float('+inf')
+        harmony_memories = list()
         for result in pool_results:
-            harmony, fitness = result.get()  # multiprocessing.pool.AsyncResult is returned for each process, so we need to call get() to pull out the value
+            harmony, fitness, harmony_memory = result.get()  # multiprocessing.pool.AsyncResult is returned for each process, so we need to call get() to pull out the value
             if (objective_function.maximize() and fitness > best_fitness) or (not objective_function.maximize() and fitness < best_fitness):
                 best_harmony = harmony
                 best_fitness = fitness
+            harmony_memories.append(harmony_memory)
 
-        return HarmonySearchResults(elapsed_time=elapsed_time, best_harmony=best_harmony, best_fitness=best_fitness)
+        return HarmonySearchResults(elapsed_time=elapsed_time, best_harmony=best_harmony, best_fitness=best_fitness, harmony_memories=harmony_memories)
     except KeyboardInterrupt:
         pool.terminate()
 
@@ -135,7 +138,7 @@ class HarmonySearch(object):
             if (self._obj_fun.maximize() and fitness > best_fitness) or (not self._obj_fun.maximize() and fitness < best_fitness):
                 best_harmony = harmony
                 best_fitness = fitness
-        return best_harmony, best_fitness
+        return best_harmony, best_fitness, self._harmony_memory
 
     def _initialize(self):
         """
