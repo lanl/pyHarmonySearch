@@ -38,7 +38,7 @@ terminating = Event()
 HarmonySearchResults = namedtuple('HarmonySearchResults', ['elapsed_time', 'best_harmony', 'best_fitness', 'harmony_memories'])
 
 
-def harmony_search(objective_function, num_processes, num_iterations):
+def harmony_search(objective_function, num_processes, num_iterations, initial_harmonies=None):
     """
         Here, we use multiprocessing.Pool to do multiple harmony searches simultaneously. Since HS is stochastic (unless random_seed is set),
         multiple runs can find different results. We run the specified number of iterations on the specified number of processes and return
@@ -47,7 +47,7 @@ def harmony_search(objective_function, num_processes, num_iterations):
     pool = Pool(num_processes)
     try:
         start = datetime.now()
-        pool_results = [pool.apply_async(worker, args=(objective_function,)) for i in range(num_iterations)]
+        pool_results = [pool.apply_async(worker, args=(objective_function, initial_harmonies,)) for i in range(num_iterations)]
         pool.close()  # no more tasks will be submitted to the pool
         pool.join()  # wait for all tasks to finish before moving on
         end = datetime.now()
@@ -69,7 +69,7 @@ def harmony_search(objective_function, num_processes, num_iterations):
         pool.terminate()
 
 
-def worker(objective_function):
+def worker(objective_function, initial_harmonies=None):
     """
         This is just a dummy function to make multiprocessing work with a class. It also checks/sets the global multiprocessing.Event to prevent
         new processes from starting work on a KeyboardInterrupt.
@@ -77,7 +77,7 @@ def worker(objective_function):
     try:
         if not terminating.is_set():
             hs = HarmonySearch(objective_function)
-            return hs.run()
+            return hs.run(initial_harmonies=initial_harmonies)
     except KeyboardInterrupt:
         terminating.set()  # set the Event to true to prevent the other processes from doing any work
 
@@ -98,7 +98,7 @@ class HarmonySearch(object):
         """
         self._obj_fun = objective_function
 
-    def run(self):
+    def run(self, initial_harmonies=None):
         """
             This is the main HS loop. It initializes the harmony memory and then continually generates new harmonies
             until the stopping criterion (max_imp iterations) is reached.
@@ -111,7 +111,7 @@ class HarmonySearch(object):
         self._harmony_memory = list()
 
         # fill harmony_memory using random parameter values
-        self._initialize()
+        self._initialize(initial_harmonies)
 
         # create max_imp improvisations
         num_imp = 0
@@ -140,18 +140,28 @@ class HarmonySearch(object):
                 best_fitness = fitness
         return best_harmony, best_fitness, self._harmony_memory
 
-    def _initialize(self):
+    def _initialize(self, initial_harmonies=None):
         """
             Initialize harmony_memory, the matrix (list of lists) containing the various harmonies (solution vectors). Note
             that we aren't actually doing any matrix operations, so a library like NumPy isn't necessary here. The matrix
             merely stores previous harmonies.
+
+            If harmonies are provided, then use them instead of randomly initializing them.
         """
-        for i in range(0, self._obj_fun.get_hms()):
-            harmony = list()
-            for j in range(0, self._obj_fun.get_num_parameters()):
-                self._random_selection(harmony, j)
-            fitness = self._obj_fun.get_fitness(harmony)
-            self._harmony_memory.append((harmony, fitness))
+        if initial_harmonies is None:
+            for i in range(0, self._obj_fun.get_hms()):
+                harmony = list()
+                for j in range(0, self._obj_fun.get_num_parameters()):
+                    self._random_selection(harmony, j)
+                fitness = self._obj_fun.get_fitness(harmony)
+                self._harmony_memory.append((harmony, fitness))
+        else:
+            assert len(initial_harmonies) == self._obj_fun.get_hms()
+            print('Setup       : Initial harmonies provided')
+            for i in range(len(initial_harmonies)):
+                harmony = initial_harmonies[i]
+                fitness = self._obj_fun.get_fitness(harmony)
+                self._harmony_memory.append((harmony, fitness))
 
     def _random_selection(self, harmony, i):
         """
