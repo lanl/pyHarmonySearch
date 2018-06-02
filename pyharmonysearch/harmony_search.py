@@ -155,13 +155,11 @@ class HarmonySearch(object):
                 harmony = list()
                 for j in range(0, self._obj_fun.get_num_parameters()):
                     self._random_selection(harmony, j)
-                fitness = self._obj_fun.get_fitness(harmony)
-                self._harmony_memory.append((harmony, fitness))
-        else:
-            for i in range(len(initial_harmonies)):
-                harmony = initial_harmonies[i]
-                fitness = self._obj_fun.get_fitness(harmony)
-                self._harmony_memory.append((harmony, fitness))
+                initial_harmonies.append(harmony)
+
+        for i in range(0, self._obj_fun.get_hms()):
+            fitness = self._obj_fun.get_fitness(initial_harmonies[i])
+            self._harmony_memory.append((initial_harmonies[i], fitness))
 
     def _random_selection(self, harmony, i):
         """
