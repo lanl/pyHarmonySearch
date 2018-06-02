@@ -111,9 +111,7 @@ class HarmonySearch(object):
         self._harmony_memory = list()
 
         # fill harmony_memory using random parameter values by default, but with initial_harmonies if provided
-        if len(initial_harmonies) != self._obj_fun.get_hms():
-            raise ValueError('Number of initial harmonies does not equal to the harmony memory size.')
-        self._initialize(initial_harmonies)
+	self._initialize(initial_harmonies)
 
         # create max_imp improvisations
         num_imp = 0
@@ -150,7 +148,15 @@ class HarmonySearch(object):
 
             If harmonies are provided, then use them instead of randomly initializing them.
         """
+        if initial_harmonies is not None:
+            if len(initial_harmonies) != self._obj_fun.get_hms():
+                raise ValueError('Number of initial harmonies does not equal to the harmony memory size.')
+            for i in range(len(initial_harmonies)):
+                if len(initial_harmonies[i]) != self._obj_fun.get_num_parameters():
+                    raise ValueError('Number of dimensions in initial harmonies does not match that defined.')
+
         if initial_harmonies is None:
+            initial_harmonies = list()
             for i in range(0, self._obj_fun.get_hms()):
                 harmony = list()
                 for j in range(0, self._obj_fun.get_num_parameters()):
