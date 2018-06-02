@@ -110,7 +110,7 @@ class HarmonySearch(object):
         # harmony_memory stores the best hms harmonies
         self._harmony_memory = list()
 
-        # fill harmony_memory using random parameter values
+        # fill harmony_memory using random parameter values by default, but with initial_harmonies if provided
         if len(initial_harmonies) != self._obj_fun.get_hms():
             raise ValueError('Number of initial harmonies does not equal to the harmony memory size.')
         self._initialize(initial_harmonies)
