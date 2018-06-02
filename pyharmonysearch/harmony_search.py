@@ -157,7 +157,6 @@ class HarmonySearch(object):
                 self._harmony_memory.append((harmony, fitness))
         else:
             assert len(initial_harmonies) == self._obj_fun.get_hms()
-            print('Setup       : Initial harmonies provided')
             for i in range(len(initial_harmonies)):
                 harmony = initial_harmonies[i]
                 fitness = self._obj_fun.get_fitness(harmony)
