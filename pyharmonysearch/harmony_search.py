@@ -111,6 +111,8 @@ class HarmonySearch(object):
         self._harmony_memory = list()
 
         # fill harmony_memory using random parameter values
+        if len(initial_harmonies) != self._obj_fun.get_hms():
+            raise ValueError('Number of initial harmonies does not equal to the harmony memory size.')
         self._initialize(initial_harmonies)
 
         # create max_imp improvisations
@@ -156,7 +158,6 @@ class HarmonySearch(object):
                 fitness = self._obj_fun.get_fitness(harmony)
                 self._harmony_memory.append((harmony, fitness))
         else:
-            assert len(initial_harmonies) == self._obj_fun.get_hms()
             for i in range(len(initial_harmonies)):
                 harmony = initial_harmonies[i]
                 fitness = self._obj_fun.get_fitness(harmony)
