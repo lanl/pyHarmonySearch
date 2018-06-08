@@ -139,8 +139,7 @@ class HarmonySearch(object):
             # save harmonies every n_inds th improvisations (i.e., one 'generation')
             if num_imp % self._obj_fun.get_hms() == 0:
                 generation += 1
-		fitnesses = list(map(self._obj_fun.get_fitness, self._harmony_memory))
-                harmony_list = {'gen': generation, 'harmonies': self._harmony_memory, 'fitness': fitnesses}
+                harmony_list = {'gen': generation, 'harmonies': self._harmony_memory}
                 self._harmony_history.append(harmony_list)
 
         # return best harmony
