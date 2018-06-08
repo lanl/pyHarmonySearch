@@ -35,7 +35,7 @@ terminating = Event()
 # namedtuples are lightweight and trivial to extend should more results be desired in the future. Right now, we're just
 # keeping track of the total elapsed clock time, the best harmony found, the fitness for that harmony, and the harmony memory,
 # which allows you to see the top harmonies.
-HarmonySearchResults = namedtuple('HarmonySearchResults', ['elapsed_time', 'best_harmony', 'best_fitness', 'harmony_memories'])
+HarmonySearchResults = namedtuple('HarmonySearchResults', ['elapsed_time', 'best_harmony', 'best_fitness', 'harmony_memories', 'harmony_histories'])
 
 
 def harmony_search(objective_function, num_processes, num_iterations, initial_harmonies=None):
@@ -57,14 +57,17 @@ def harmony_search(objective_function, num_processes, num_iterations, initial_ha
         best_harmony = None
         best_fitness = float('-inf') if objective_function.maximize() else float('+inf')
         harmony_memories = list()
+        harmony_histories = list()
         for result in pool_results:
-            harmony, fitness, harmony_memory = result.get()  # multiprocessing.pool.AsyncResult is returned for each process, so we need to call get() to pull out the value
+            harmony, fitness, harmony_memory, harmony_history = result.get()  # multiprocessing.pool.AsyncResult is returned for each process, so we need to call get() to pull out the value
             if (objective_function.maximize() and fitness > best_fitness) or (not objective_function.maximize() and fitness < best_fitness):
                 best_harmony = harmony
                 best_fitness = fitness
             harmony_memories.append(harmony_memory)
+            harmony_histories.append(harmony_history)
 
-        return HarmonySearchResults(elapsed_time=elapsed_time, best_harmony=best_harmony, best_fitness=best_fitness, harmony_memories=harmony_memories)
+        return HarmonySearchResults(elapsed_time=elapsed_time, best_harmony=best_harmony, best_fitness=best_fitness,\
+                                    harmony_memories=harmony_memories, harmony_histories=harmony_histories)
     except KeyboardInterrupt:
         pool.terminate()
 
@@ -110,10 +113,14 @@ class HarmonySearch(object):
         # harmony_memory stores the best hms harmonies
         self._harmony_memory = list()
 
+        # harmony_history stores all hms harmonies every generation (or n_inds generations)
+        self._harmony_history = list()
+
         # fill harmony_memory using random parameter values by default, but with initial_harmonies if provided
 	self._initialize(initial_harmonies)
 
         # create max_imp improvisations
+        generation = 0
         num_imp = 0
         while(num_imp < self._obj_fun.get_max_imp()):
             # generate new harmony
@@ -126,10 +133,15 @@ class HarmonySearch(object):
                 else:
                     self._random_selection(harmony, i)
             fitness = self._obj_fun.get_fitness(harmony)
-
             self._update_harmony_memory(harmony, fitness)
-
             num_imp += 1
+
+            # save harmonies every n_inds th improvisations (i.e., one 'generation')
+            if num_imp % self._obj_fun.get_hms() == 0:
+                generation += 1
+		fitnesses = list(map(self._obj_fun.get_fitness, self._harmony_memory))
+                harmony_list = {'gen': generation, 'harmonies': self._harmony_memory, 'fitness': fitnesses}
+                self._harmony_history.append(harmony_list)
 
         # return best harmony
         best_harmony = None
@@ -138,7 +150,7 @@ class HarmonySearch(object):
             if (self._obj_fun.maximize() and fitness > best_fitness) or (not self._obj_fun.maximize() and fitness < best_fitness):
                 best_harmony = harmony
                 best_fitness = fitness
-        return best_harmony, best_fitness, self._harmony_memory
+        return best_harmony, best_fitness, self._harmony_memory, self._harmony_history
 
     def _initialize(self, initial_harmonies=None):
         """
