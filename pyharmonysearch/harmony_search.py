@@ -113,7 +113,7 @@ class HarmonySearch(object):
         # harmony_memory stores the best hms harmonies
         self._harmony_memory = list()
 
-        # harmony_history stores all hms harmonies every generation (or n_inds generations)
+        # harmony_history stores all hms harmonies every generation (or n generations)
         self._harmony_history = list()
 
         # fill harmony_memory using random parameter values by default, but with initial_harmonies if provided
@@ -136,7 +136,7 @@ class HarmonySearch(object):
             self._update_harmony_memory(harmony, fitness)
             num_imp += 1
 
-            # save harmonies every n_inds th improvisations (i.e., one 'generation')
+            # save harmonies every nth improvisations (i.e., one 'generation')
             if num_imp % self._obj_fun.get_hms() == 0:
                 generation += 1
                 harmony_list = {'gen': generation, 'harmonies': self._harmony_memory}
