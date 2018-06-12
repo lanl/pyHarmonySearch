@@ -158,6 +158,8 @@ class HarmonySearch(object):
             merely stores previous harmonies.
 
             If harmonies are provided, then use them instead of randomly initializing them.
+
+            Populate harmony_history with initial harmony memory.
         """
         if initial_harmonies is not None:
             if len(initial_harmonies) != self._obj_fun.get_hms():
@@ -177,6 +179,9 @@ class HarmonySearch(object):
         for i in range(0, self._obj_fun.get_hms()):
             fitness = self._obj_fun.get_fitness(initial_harmonies[i])
             self._harmony_memory.append((initial_harmonies[i], fitness))
+
+	harmony_list = {'gen': 0, 'harmonies': self._harmony_memory}
+	self._harmony_history.append(harmony_list)
 
     def _random_selection(self, harmony, i):
         """
