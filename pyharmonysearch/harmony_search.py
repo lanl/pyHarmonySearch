@@ -164,9 +164,12 @@ class HarmonySearch(object):
         if initial_harmonies is not None:
             if len(initial_harmonies) != self._obj_fun.get_hms():
                 raise ValueError('Number of initial harmonies does not equal to the harmony memory size.')
+            
+            num_parameters = self._obj_fun.get_num_parameters
             for i in range(len(initial_harmonies)):
-                if len(initial_harmonies[i]) != self._obj_fun.get_num_parameters():
-                    raise ValueError('Number of dimensions in initial harmonies does not match that defined.')
+                num_parameters_initial_harmonies = len(initial_harmonies[i])
+                if num_parameters_initial_harmonies != num_parameters:
+                    raise ValueError('Number of parameters in initial harmonies does not match that defined.')
 
         if initial_harmonies is None:
             initial_harmonies = list()
