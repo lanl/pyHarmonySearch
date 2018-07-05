@@ -119,6 +119,6 @@ if __name__ == '__main__':
     obj_fun = ObjectiveFunction()
     num_processes = 1
     num_iterations = 1  # because random_seed is defined, there's no point in running this multiple times
-    initial_harmonies = [[123, -123] for _ in range(100)]    # set the initial harmonies for 100 individuals to [123, -123]
+    initial_harmonies = [[random.randint(-1000, 1000) for _ in range(2)] for _ in range(100)]
     results = harmony_search(obj_fun, num_processes, num_iterations, initial_harmonies=initial_harmonies)
     print('Elapsed time: {}\nBest harmony: {}\nBest fitness: {}'.format(results.elapsed_time, results.best_harmony, results.best_fitness))
