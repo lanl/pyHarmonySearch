@@ -31,7 +31,7 @@ Install from source:
     python setup.py install
 
 ## USING THIS CODE
-There are four examples included. The first three examples ([2-D_continuous_seed.py](examples/2-D_continuous_seed.py), [2-D_discrete_x.py](examples/2-D_discrete_x.py), and [2-D_continuous_fixed_x.py](examples/2-D_continuous_fixed_x.py)) are variations on each other that find the global maximum of a simple 2-D function. The fourth example ([5-D_linear_system.py](examples/5-D_linear_system.py)) stochastically solves a 5-D linear system of equations. Read the documentation in each example for more information.
+There are five examples included. The first three examples ([2-D_continuous_seed.py](examples/2-D_continuous_seed.py), [2-D_discrete_x.py](examples/2-D_discrete_x.py), and [2-D_continuous_fixed_x.py](examples/2-D_continuous_fixed_x.py)) are variations on each other that find the global maximum of a simple 2-D function. The fourth example ([5-D_linear_system.py](examples/5-D_linear_system.py)) stochastically solves a 5-D linear system of equations. The fifth example ([2-D_continuous_specified_initial_harmonies.py](examples/2-D_continuous_specified_initial_harmonies.py)). Read the documentation in each example for more information.
 
     > ./2-D_continuous_fixed_x.py
     Elapsed time: 0:00:23.396807
@@ -49,10 +49,14 @@ There are four examples included. The first three examples ([2-D_continuous_seed
     Elapsed time: 0:02:29.715337
     Best harmony: [8.118886532259536, 2.0254098515892665, 0.6678692319283357, 2.906307072622585, 9.814436850217918]
     Best fitness: 0.8690865628414204
-    
-`HarmonySearchResults`, a [namedtuple](https://docs.python.org/3/library/collections.html#collections.namedtuple), is returned. Currently, only 3 fields are attached: `elapsed_time`, `best_harmony`, and `best_fitness`.
+    > ./2-D_continuous_specified_initial_harmonies.py
+    Elapsed time: 0:00:02.788820
+    Best harmony: [-0.0017887282724807774, -0.9977360240692968]
+    Best fitness: 3.99999167486
 
-Note that like many similar optimization algorithms, HS is stochastic, so you will get a slightly different result every time you run it. Because of the stochasticity, I have added the ability to run multiple iterations of HS simultaneously using [Python's multiprocessing module](http://docs.python.org/3.4/library/multiprocessing.html); you simply specify the number of processes on which to run the specified number of iterations. The resulting solution is the best solution found from all iterations. An optional random seed can be used to generate reproducible results.
+`HarmonySearchResults`, a [namedtuple](https://docs.python.org/3/library/collections.html#collections.namedtuple), is returned. Currently, five fields are attached: `elapsed_time`, `best_harmony`, `best_fitness`, `harmony_memories`, and `harmony_histories`.
+
+Note that like many similar optimization algorithms, HS is stochastic, so you will get a slightly different result every time you run it. Because of the stochasticity, I have added the ability to run multiple iterations of HS simultaneously using [Python's multiprocessing module](http://docs.python.org/3.4/library/multiprocessing.html); you simply specify the number of processes on which to run the specified number of iterations. The resulting solution is the best solution found from all iterations. Also, the user can specify the initial harmonies. An optional random seed can be used to generate reproducible results.
 
 In general, you will make use of this code in three steps:
 
