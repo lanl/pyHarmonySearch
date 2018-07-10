@@ -97,7 +97,7 @@ Some modifications and improvements have been suggested to the original algorith
 ## DIFFERENCES
 Python optimization packages that implement HS:
 
-* [pyOpt](http://www.pyopt.org/)
-* [PyGMO](http://pagmo.sourceforge.net/pygmo/)
+* [pyOpt](https://github.com/madebr/pyOpt)
+* [PyGMO](https://github.com/esa/pagmo2)
 
 pyHarmonySearch differs from other optimization packages in that it relies on no 3rd party software. It is simple and easy-to-use standalone Python code. The primary reason I developed this was because I got tired of having to compile and maintain my own 3rd party packages on a machine running several-year-old software for which I have only user-level access. SciPy is particularly nasty to build, and many scientific packages rely on it. I skirted this issue by implementing HS myself from scratch.
