@@ -1,8 +1,8 @@
 # Changes
 
-## 1.4 (2018-07-04)
-* The initial harmonies can be specified by passing a list of harmonies to harmony_search().
-* `HarmonySearchResults` now also stores the history of harmonies (stored every nth fitness evaluations, where n is the number of individual solutions) of each run.
+## 1.4 (2018-07-11)
+* The initial harmonies can be specified by passing a list of harmonies to `harmony_search()`. (courtesy @szhan)
+* `HarmonySearchResults` now also stores the history of harmonies (stored every `n`th fitness evaluations, where `n` is the number of individual solutions) of each run. (courtesy @szhan)
 
 ## 1.3.3 (2015-12-05)
 * `HarmonySearchResults` now also stores the last complete harmony memory from each run.

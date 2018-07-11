@@ -162,6 +162,8 @@ class HarmonySearch(object):
             Populate harmony_history with initial harmony memory.
         """
         if initial_harmonies is not None:
+            # verify that the initial harmonies are provided correctly
+
             if len(initial_harmonies) != self._obj_fun.get_hms():
                 raise ValueError('Number of initial harmonies does not equal to the harmony memory size.')
             
@@ -170,8 +172,7 @@ class HarmonySearch(object):
                 num_parameters_initial_harmonies = len(initial_harmonies[i])
                 if num_parameters_initial_harmonies != num_parameters:
                     raise ValueError('Number of parameters in initial harmonies does not match that defined.')
-
-        if initial_harmonies is None:
+        else:
             initial_harmonies = list()
             for i in range(0, self._obj_fun.get_hms()):
                 harmony = list()
