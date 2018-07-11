@@ -1,6 +1,9 @@
 # Changes
 
-## 1.4 (2018-07-11)
+## 1.4.1 (2018-07-11)
+* Fixing build/deploy issue.
+
+## 1.4.0 (2018-07-11)
 * The initial harmonies can be specified by passing a list of harmonies to `harmony_search()`. (courtesy @szhan)
 * `HarmonySearchResults` now also stores the history of harmonies (stored every `n`th fitness evaluations, where `n` is the number of individual solutions) of each run. (courtesy @szhan)
 
