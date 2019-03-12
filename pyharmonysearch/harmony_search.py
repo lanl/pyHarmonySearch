@@ -117,7 +117,7 @@ class HarmonySearch(object):
         self._harmony_history = list()
 
         # fill harmony_memory using random parameter values by default, but with initial_harmonies if provided
-	self._initialize(initial_harmonies)
+        self._initialize(initial_harmonies)
 
         # create max_imp improvisations
         generation = 0
@@ -184,8 +184,8 @@ class HarmonySearch(object):
             fitness = self._obj_fun.get_fitness(initial_harmonies[i])
             self._harmony_memory.append((initial_harmonies[i], fitness))
 
-	harmony_list = {'gen': 0, 'harmonies': self._harmony_memory}
-	self._harmony_history.append(harmony_list)
+        harmony_list = {'gen': 0, 'harmonies': self._harmony_memory}
+        self._harmony_history.append(harmony_list)
 
     def _random_selection(self, harmony, i):
         """
