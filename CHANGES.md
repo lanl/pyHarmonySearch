@@ -1,5 +1,8 @@
 # Changes
 
+## 1.4.2 (2020-01-13)
+* Fixing inexplicable tab/space issue in PyPI release (#15).
+
 ## 1.4.1 (2018-07-11)
 * Fixing build/deploy issue.
 
