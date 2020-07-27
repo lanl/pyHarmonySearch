@@ -1,5 +1,8 @@
 # Changes
 
+## 1.4.3 (2020-07-27)
+* Fixing shallow copy issue of harmony memory (#16).
+
 ## 1.4.2 (2020-01-13)
 * Fixing inexplicable tab/space issue in PyPI release (#15).
 

@@ -25,6 +25,7 @@ import random
 from multiprocessing import Pool, Event
 from datetime import datetime
 from collections import namedtuple
+import copy
 
 # Note: We use a global multiprocessing.Event to deal with a KeyboardInterrupt. This idea comes from
 # http://stackoverflow.com/questions/14579474/multiprocessing-pool-spawning-new-childern-after-terminate-on-linux-python2-7.
@@ -139,7 +140,7 @@ class HarmonySearch(object):
             # save harmonies every nth improvisations (i.e., one 'generation')
             if num_imp % self._obj_fun.get_hms() == 0:
                 generation += 1
-                harmony_list = {'gen': generation, 'harmonies': self._harmony_memory}
+                harmony_list = {'gen': generation, 'harmonies': copy.deepcopy(self._harmony_memory)}
                 self._harmony_history.append(harmony_list)
 
         # return best harmony
