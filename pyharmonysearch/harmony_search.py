@@ -71,6 +71,7 @@ def harmony_search(objective_function, num_processes, num_iterations, initial_ha
                                     harmony_memories=harmony_memories, harmony_histories=harmony_histories)
     except KeyboardInterrupt:
         pool.terminate()
+        raise
 
 
 def worker(objective_function, initial_harmonies=None):
@@ -84,6 +85,7 @@ def worker(objective_function, initial_harmonies=None):
             return hs.run(initial_harmonies=initial_harmonies)
     except KeyboardInterrupt:
         terminating.set()  # set the Event to true to prevent the other processes from doing any work
+        raise
 
 
 class HarmonySearch(object):
