@@ -185,7 +185,7 @@ class HarmonySearch(object):
             fitness = self._obj_fun.get_fitness(initial_harmonies[i])
             self._harmony_memory.append((initial_harmonies[i], fitness))
 
-        harmony_list = {'gen': 0, 'harmonies': self._harmony_memory}
+        harmony_list = {'gen': 0, 'harmonies': copy.deepcopy(self._harmony_memory)}
         self._harmony_history.append(harmony_list)
 
     def _random_selection(self, harmony, i):
