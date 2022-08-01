@@ -25,7 +25,7 @@ from setuptools import setup
 
 setup(
     name='pyHarmonySearch',
-    version='1.4.3',
+    version='1.4.4',
     description='pyHarmonySearch is a pure Python implementation of the harmony search (HS) global optimization algorithm.',
     long_description="""pyHarmonySearch is a pure Python implementation of the harmony search (HS) global optimization algorithm. HS is a metaheuristic search algorithm that, similar to simulated annealing, tabu, and evolutionary searches, is based on real world phenomena. Specifically, HS mimics a jazz band improvising together. Courtesy `Wikipedia <http://en.wikipedia.org/wiki/Harmony_search>`_:
 
@@ -33,12 +33,12 @@ setup(
 
 pyHarmonySearch supports both continuous and discrete variables and can take advantage of parallel processing using `Python's built-in multiprocessing module <http://docs.python.org/3.4/library/multiprocessing.html>`_.
 
-For more information on pyHarmonySearch, visit the `GitHub project page <https://github.com/gfairchild/pyHarmonySearch>`_.""",
+For more information on pyHarmonySearch, visit the `GitHub project page <https://github.com/lanl/pyHarmonySearch>`_.""",
     author='Geoffrey Fairchild',
     author_email='mail@gfairchild.com',
     maintainer='Geoffrey Fairchild',
     maintainer_email='mail@gfairchild.com',
-    url='https://github.com/gfairchild/pyHarmonySearch',
+    url='https://github.com/lanl/pyHarmonySearch',
     license='BSD 3-Clause License',
     classifiers=[
         'Development Status :: 5 - Production/Stable',
@@ -47,13 +47,11 @@ For more information on pyHarmonySearch, visit the `GitHub project page <https:/
         'Intended Audience :: Science/Research',
         'License :: OSI Approved :: BSD License',
         'Operating System :: OS Independent',
-        'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.5',
-        'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10',
         'Topic :: Scientific/Engineering :: Artificial Intelligence',
     ],
     packages=[

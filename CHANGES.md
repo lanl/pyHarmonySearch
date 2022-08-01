@@ -1,5 +1,10 @@
 # Changes
 
+## 1.4.4 (2022-08-01)
+* Drop Python 3.6 support and below (EOL).
+* Add newer Python versions.
+* Updating project URL (moved from [@gfairchild](https://github.com/gfairchild)'s personal namespace to [@lanl](https://github.com/lanl)'s namespace).
+
 ## 1.4.3 (2020-07-27)
 * Fixing shallow copy issue of harmony memory (#16).
 
