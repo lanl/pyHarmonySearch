@@ -71,6 +71,34 @@ def harmony_search(objective_function, num_processes, num_iterations, initial_ha
                                     harmony_memories=harmony_memories, harmony_histories=harmony_histories)
     except KeyboardInterrupt:
         pool.terminate()
+        raise
+
+
+def harmony_search_serial(objective_function, num_iterations, initial_harmonies=None):
+    """
+        Same as ``harmony_search`` but without multiprocessing. This could be useful when there's already multiprocessing in, e.g.,
+        ``get_fitness`` method in ``objective_function``, since multiprocessing cannot be used within multiprocessing.
+    """
+    start = datetime.now()
+    results = [worker(objective_function, initial_harmonies) for i in range(num_iterations)]
+    end = datetime.now()
+    elapsed_time = end - start
+
+    # find best harmony from all iterations
+    best_harmony = None
+    best_fitness = float('-inf') if objective_function.maximize() else float('+inf')
+    harmony_memories = list()
+    harmony_histories = list()
+    for result in results:
+        harmony, fitness, harmony_memory, harmony_history = result
+        if (objective_function.maximize() and fitness > best_fitness) or (not objective_function.maximize() and fitness < best_fitness):
+            best_harmony = harmony
+            best_fitness = fitness
+        harmony_memories.append(harmony_memory)
+        harmony_histories.append(harmony_history)
+
+    return HarmonySearchResults(elapsed_time=elapsed_time, best_harmony=best_harmony, best_fitness=best_fitness,\
+                                harmony_memories=harmony_memories, harmony_histories=harmony_histories)
 
 
 def worker(objective_function, initial_harmonies=None):
@@ -84,6 +112,7 @@ def worker(objective_function, initial_harmonies=None):
             return hs.run(initial_harmonies=initial_harmonies)
     except KeyboardInterrupt:
         terminating.set()  # set the Event to true to prevent the other processes from doing any work
+        raise
 
 
 class HarmonySearch(object):
@@ -185,7 +214,7 @@ class HarmonySearch(object):
             fitness = self._obj_fun.get_fitness(initial_harmonies[i])
             self._harmony_memory.append((initial_harmonies[i], fitness))
 
-        harmony_list = {'gen': 0, 'harmonies': self._harmony_memory}
+        harmony_list = {'gen': 0, 'harmonies': copy.deepcopy(self._harmony_memory)}
         self._harmony_history.append(harmony_list)
 
     def _random_selection(self, harmony, i):
