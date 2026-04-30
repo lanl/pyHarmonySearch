@@ -22,6 +22,7 @@
 """
 
 import inspect
+from typing import List, Optional, Union, Any
 
 
 class ObjectiveFunctionInterface(object):
@@ -30,7 +31,7 @@ class ObjectiveFunctionInterface(object):
         This interface must be implemented by you. This defines the objective function HS optimizes.
     """
 
-    def get_fitness(self, vector):
+    def get_fitness(self, vector: List[Union[int, float]]) -> float:
         """
             Return the objective function value given a solution vector containing each decision variable. In practice,
             vector should be a list of parameters.
@@ -42,7 +43,7 @@ class ObjectiveFunctionInterface(object):
         """
         raise NotImplementedError(inspect.stack()[0][3])
 
-    def get_value(self, i, j=None):
+    def get_value(self, i: int, j: Optional[int] = None) -> Union[int, float]:
         """
             Get a valid value of parameter i. You can return values any way you like - uniformly at random, according to some
             distribution, etc.
@@ -67,7 +68,7 @@ class ObjectiveFunctionInterface(object):
         """
         raise NotImplementedError(inspect.stack()[0][3])
 
-    def get_index(self, i, v):
+    def get_index(self, i: int, v: Union[int, float]) -> int:
         """
             Get the index of the value v of the specified parameter.
 
@@ -84,7 +85,7 @@ class ObjectiveFunctionInterface(object):
         """
         raise NotImplementedError(inspect.stack()[0][3])
 
-    def get_num_discrete_values(self, i):
+    def get_num_discrete_values(self, i: int) -> int:
         """
             Get the number of values possible for the discrete parameter i.
 
@@ -101,7 +102,7 @@ class ObjectiveFunctionInterface(object):
         """
         raise NotImplementedError(inspect.stack()[0][3])
 
-    def get_lower_bound(self, i):
+    def get_lower_bound(self, i: int) -> float:
         """
             Return the lower bound of parameter i. Using the example for fitness(), the lower bound for y may be -1000.
             Seeing as y is the 2nd parameter (index 1 in a 0-indexed system), this call may look like the following:
@@ -113,7 +114,7 @@ class ObjectiveFunctionInterface(object):
         """
         raise NotImplementedError(inspect.stack()[0][3])
 
-    def get_upper_bound(self, i):
+    def get_upper_bound(self, i: int) -> float:
         """
             Return the upper bound of parameter i.
 
@@ -121,7 +122,7 @@ class ObjectiveFunctionInterface(object):
         """
         raise NotImplementedError(inspect.stack()[0][3])
 
-    def is_variable(self, i):
+    def is_variable(self, i: int) -> bool:
         """
             Return whether or not the parameter at the specified index should be varied by HS. It may be the case that HS should
             only vary certain parameters while others should remain fixed. In the fitness() example, perhaps HS should only vary x.
@@ -137,7 +138,7 @@ class ObjectiveFunctionInterface(object):
         """
         raise NotImplementedError(inspect.stack()[0][3])
 
-    def is_discrete(self, i):
+    def is_discrete(self, i: int) -> bool:
         """
             Return whether or not the parameter at the specified index is a discrete parameter. Not all parameters may be continuous.
             This only really matters in the pitch adjustment step of HS. Suppose that x is continuous (e.g., x varies in [-1000, 1000]),
@@ -150,7 +151,7 @@ class ObjectiveFunctionInterface(object):
         """
         raise NotImplementedError(inspect.stack()[0][3])
 
-    def get_num_parameters(self):
+    def get_num_parameters(self) -> int:
         """
             Return the number of parameters used by the objective function. Using the example in fitness(), this will be 2.
             A sample call may look like the following:
@@ -160,59 +161,59 @@ class ObjectiveFunctionInterface(object):
         """
         raise NotImplementedError(inspect.stack()[0][3])
 
-    def use_random_seed(self):
+    def use_random_seed(self) -> bool:
         """
             Return whether or not a random seed should be used. If a random seed is used, the same result will be generated each time (i.e., multiple
             HS iterations will return the same best solution).
         """
         raise NotImplementedError(inspect.stack()[0][3])
 
-    def get_random_seed(self):
+    def get_random_seed(self) -> int:
         """
             Return an optional random seed. If use_random_seed() == False, this won't be called.
         """
         raise NotImplementedError(inspect.stack()[0][3])
 
-    def get_max_imp(self):
+    def get_max_imp(self) -> int:
         """
             Return the maximum number of improvisations. This represents the stopping criterion (i.e., the number of fitness evaluations HS
             performs until search stops).
         """
         raise NotImplementedError(inspect.stack()[0][3])
 
-    def get_hmcr(self):
+    def get_hmcr(self) -> float:
         """
             Return the harmony memory considering rate. This represents the proportion of memory consideration calls vs. random selection calls.
         """
         raise NotImplementedError(inspect.stack()[0][3])
 
-    def get_par(self):
+    def get_par(self) -> float:
         """
             Return the pitch adjusting rate. This represents how often pitch adjustment will occur if memory consideration has already been done.
         """
         raise NotImplementedError(inspect.stack()[0][3])
 
-    def get_hms(self):
+    def get_hms(self) -> int:
         """
             Return the harmony memory size. This represents the size of the vector that stores previously best harmonies.
         """
         raise NotImplementedError(inspect.stack()[0][3])
 
-    def get_mpai(self):
+    def get_mpai(self) -> int:
         """
             Return the maximum pitch adjustment index. This determines the range from which pitch adjustment may occur for discrete variables. Also known as
             discrete bandwidth.
         """
         raise NotImplementedError(inspect.stack()[0][3])
 
-    def get_mpap(self):
+    def get_mpap(self) -> float:
         """
             Return the maximum pitch adjustment proportion. This determines the range from which pitch adjustment may occur for continuous variables. Also known as
             continuous bandwidth.
         """
         raise NotImplementedError(inspect.stack()[0][3])
 
-    def maximize(self):
+    def maximize(self) -> bool:
         """
             Return True if this is a maximization problem, False if minimization problem.
         """

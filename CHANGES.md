@@ -1,5 +1,21 @@
 # Changes
 
+## 1.4.5 (2026-04-29)
+* **Major update**: Added comprehensive test suite with 100% code coverage (567+ tests)
+  * Unit tests covering all classes and methods
+  * Integration tests with actual multiprocessing validation
+  * Functional tests validating all example scripts
+  * Property-based tests using Hypothesis
+* Added full type hints to all source code (Python 3.7+ compatible)
+* Added modern development infrastructure:
+  * pytest-based test suite with coverage reporting
+  * GitHub Actions CI/CD with matrix testing (Python 3.7-3.12, Linux/macOS/Windows)
+  * Pre-commit hooks for code quality
+  * Makefile with convenient test commands
+  * Modern pyproject.toml configuration
+* Added comprehensive testing documentation (TESTING.md)
+* No changes to public API or functionality (backward compatible)
+
 ## 1.4.4 (2022-08-01)
 * Drop Python 3.6 support and below (EOL).
 * Add newer Python versions.

@@ -21,5 +21,7 @@
     THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 
-from .harmony_search import harmony_search, HarmonySearch
+from .harmony_search import harmony_search, harmony_search_serial, HarmonySearch, HarmonySearchResults
 from .objective_function_interface import ObjectiveFunctionInterface
+
+__all__ = ['harmony_search', 'harmony_search_serial', 'HarmonySearch', 'HarmonySearchResults', 'ObjectiveFunctionInterface']
