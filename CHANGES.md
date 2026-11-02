@@ -11,6 +11,7 @@
 * Fix the discrete example's `get_value` treating index 0 as "no index" (`if j:` instead of `if j is not None:`).
 * Make the initial-harmonies example reproducible by seeding before generating the initial harmonies.
 * Fix the 5-D example crashing on a machine with a single CPU.
+* Deduplicate the result handling shared by `harmony_search()` and `harmony_search_serial()` (no behavior change).
 * Expand the README: tuning parameters, results, multiprocessing requirements, and `harmony_search_serial()`.
 
 ## 1.4.4 (2022-08-01)
