@@ -1,9 +1,24 @@
 # Changes
 
+## 1.5.0 (unreleased)
+* Drop Python 3.10 support and below (EOL).
+* Add Python 3.11 through 3.15 classifiers and test against them in CI.
+* Move packaging from `setup.py` to `pyproject.toml` (hatchling).
+* Add a pytest unit test suite (100% branch coverage) and a GitHub Actions workflow that lints with ruff and runs the tests against every supported Python version (#12).
+* Fix every search after a `KeyboardInterrupt` failing in the same process (e.g. a REPL or Jupyter): the global `terminating` flag is now cleared at the start of each search.
+* Fix `KeyboardInterrupt` not stopping other workers under the spawn and forkserver start methods (spawn is the default on macOS and Windows; forkserver is the default on Linux from Python 3.14): workers now share the parent's `terminating` Event.
+* Terminate the process pool on any exception, not just `KeyboardInterrupt`.
+* Fix the discrete example's `get_value` treating index 0 as "no index" (`if j:` instead of `if j is not None:`).
+* Make the initial-harmonies example reproducible by seeding before generating the initial harmonies.
+* Fix the 5-D example crashing on a machine with a single CPU.
+* Expand the README: tuning parameters, results, multiprocessing requirements, and `harmony_search_serial()`.
+
 ## 1.4.4 (2022-08-01)
 * Drop Python 3.6 support and below (EOL).
 * Add newer Python versions.
 * Updating project URL (moved from [@gfairchild](https://github.com/gfairchild)'s personal namespace to [@lanl](https://github.com/lanl)'s namespace).
+* Add `harmony_search_serial()` for running without multiprocessing. (courtesy @kkew3)
+* Re-raise `KeyboardInterrupt` instead of returning `None`. (courtesy @kkew3)
 
 ## 1.4.3 (2020-07-27)
 * Fixing shallow copy issue of harmony memory (#16).

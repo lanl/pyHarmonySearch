@@ -23,19 +23,19 @@
     THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 
-from pyharmonysearch import ObjectiveFunctionInterface, harmony_search
 import random
-from bisect import bisect_left
 from multiprocessing import cpu_count
+
+from pyharmonysearch import ObjectiveFunctionInterface, harmony_search
 
 
 class ObjectiveFunction(ObjectiveFunctionInterface):
 
     """
-        This is a 5-D system of equations that comes from http://answers.yahoo.com/question/index?qid=20120830142005AA5dTyg.
+        This is a 5-D system of equations that originally came from a (now defunct) Yahoo Answers question.
         This example is quite a bit more computationally expensive than the others.
 
-        Find values of w, x, y, and z that satisfy the following system of equations:
+        Find values of A, B, C, D, and E that satisfy the following system of equations:
 
             A + 2B + 3C + 2D = 19.968
             -B + C = -1.15
@@ -131,7 +131,7 @@ class ObjectiveFunction(ObjectiveFunctionInterface):
 
 if __name__ == '__main__':
     obj_fun = ObjectiveFunction()
-    num_processes = cpu_count() - 1  # use number of logical CPUs - 1 so that I have one available for use
-    num_iterations = num_processes  # each process does 1 iterations
+    num_processes = max(1, cpu_count() - 1)  # leave one logical CPU free, but always use at least one
+    num_iterations = num_processes  # each process does 1 iteration
     results = harmony_search(obj_fun, num_processes, num_iterations)
-    print('Elapsed time: {}\nBest harmony: {}\nBest fitness: {}'.format(results.elapsed_time, results.best_harmony, results.best_fitness))
+    print(f'Elapsed time: {results.elapsed_time}\nBest harmony: {results.best_harmony}\nBest fitness: {results.best_fitness}')

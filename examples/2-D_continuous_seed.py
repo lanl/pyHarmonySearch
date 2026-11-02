@@ -23,9 +23,10 @@
     THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 
-from pyharmonysearch import ObjectiveFunctionInterface, harmony_search
-from math import pow
 import random
+from math import pow
+
+from pyharmonysearch import ObjectiveFunctionInterface, harmony_search
 
 
 class ObjectiveFunction(ObjectiveFunctionInterface):
@@ -40,8 +41,6 @@ class ObjectiveFunction(ObjectiveFunctionInterface):
             The maximum is 4 at (0, -1).
 
         Note that since all variables are continuous, we don't actually need to implement get_index() and get_num_discrete_values().
-
-        Warning: Stochastically solving a linear system is dumb. This is just a toy example.
     """
 
     def __init__(self):
@@ -120,4 +119,4 @@ if __name__ == '__main__':
     num_processes = 1
     num_iterations = 1  # because random_seed is defined, there's no point in running this multiple times
     results = harmony_search(obj_fun, num_processes, num_iterations)
-    print('Elapsed time: {}\nBest harmony: {}\nBest fitness: {}'.format(results.elapsed_time, results.best_harmony, results.best_fitness))
+    print(f'Elapsed time: {results.elapsed_time}\nBest harmony: {results.best_harmony}\nBest fitness: {results.best_fitness}')

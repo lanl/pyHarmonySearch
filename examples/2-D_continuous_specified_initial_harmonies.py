@@ -23,16 +23,19 @@
     THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 
-from pyharmonysearch import ObjectiveFunctionInterface, harmony_search
-from math import pow
 import random
+from math import pow
+
+from pyharmonysearch import ObjectiveFunctionInterface, harmony_search
 
 
 class ObjectiveFunction(ObjectiveFunctionInterface):
 
     """
-        This is a toy objective function that contains only continuous variables. A random seed is used, so the same result
-        will be generated every time.
+        This is a toy objective function that contains only continuous variables. It is the same as 2-D_continuous_seed.py,
+        except that the initial harmony memory is supplied by passing initial_harmonies (a list of hms harmonies, each
+        with get_num_parameters() values) to harmony_search(). A random seed is used for both the initial harmonies and
+        the search, so the same result will be generated every time.
 
         Goal:
 
@@ -40,8 +43,6 @@ class ObjectiveFunction(ObjectiveFunctionInterface):
             The maximum is 4 at (0, -1).
 
         Note that since all variables are continuous, we don't actually need to implement get_index() and get_num_discrete_values().
-
-        Warning: Stochastically solving a linear system is dumb. This is just a toy example.
     """
 
     def __init__(self):
@@ -119,6 +120,8 @@ if __name__ == '__main__':
     obj_fun = ObjectiveFunction()
     num_processes = 1
     num_iterations = 1  # because random_seed is defined, there's no point in running this multiple times
-    initial_harmonies = [[random.randint(-1000, 1000) for _ in range(2)] for _ in range(100)]
+    random.seed(obj_fun.get_random_seed())  # seed the initial harmonies too, so the whole run is reproducible
+    initial_harmonies = [[random.randint(-1000, 1000) for _ in range(obj_fun.get_num_parameters())]
+                         for _ in range(obj_fun.get_hms())]
     results = harmony_search(obj_fun, num_processes, num_iterations, initial_harmonies=initial_harmonies)
-    print('Elapsed time: {}\nBest harmony: {}\nBest fitness: {}'.format(results.elapsed_time, results.best_harmony, results.best_fitness))
+    print(f'Elapsed time: {results.elapsed_time}\nBest harmony: {results.best_harmony}\nBest fitness: {results.best_fitness}')

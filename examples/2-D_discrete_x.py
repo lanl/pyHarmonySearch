@@ -23,12 +23,13 @@
     THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 
-from pyharmonysearch import ObjectiveFunctionInterface, harmony_search
-from math import pow
 import random
 from bisect import bisect_left
+from math import pow
 from multiprocessing import cpu_count
 from pprint import pprint
+
+from pyharmonysearch import ObjectiveFunctionInterface, harmony_search
 
 
 class ObjectiveFunction(ObjectiveFunctionInterface):
@@ -43,8 +44,6 @@ class ObjectiveFunction(ObjectiveFunctionInterface):
 
         In this implementation, x is a discrete variable with choices ranging from -100 to 100 in increments of 1.
         y is still a continuous variable.
-
-        Warning: Stochastically solving a linear system is dumb. This is just a toy example.
     """
 
     def __init__(self):
@@ -67,7 +66,7 @@ class ObjectiveFunction(ObjectiveFunctionInterface):
 
     def get_value(self, i, j=None):
         if self.is_discrete(i):
-            if j:
+            if j is not None:  # j can be 0, so don't just check truthiness
                 return self._discrete_values[i][j]
             return self._discrete_values[i][random.randint(0, len(self._discrete_values[i]) - 1)]
         return random.uniform(self._lower_bounds[i], self._upper_bounds[i])
@@ -143,5 +142,5 @@ if __name__ == '__main__':
     num_processes = cpu_count()  # use number of logical CPUs
     num_iterations = num_processes * 5  # each process does 5 iterations
     results = harmony_search(obj_fun, num_processes, num_iterations)
-    print('Elapsed time: {}\nBest harmony: {}\nBest fitness: {}\nHarmony memories:'.format(results.elapsed_time, results.best_harmony, results.best_fitness))
+    print(f'Elapsed time: {results.elapsed_time}\nBest harmony: {results.best_harmony}\nBest fitness: {results.best_fitness}\nHarmony memories:')
     pprint(results.harmony_memories)

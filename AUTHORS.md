@@ -12,3 +12,4 @@ Geoffrey Fairchild
 Sorted by date of first contribution:
 
 * [Shing Hei Zhan](https://github.com/szhan)
+* [kkew3](https://github.com/kkew3)
