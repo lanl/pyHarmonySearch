@@ -12,7 +12,7 @@ Pure-Python harmony search optimizer. The package uses only the standard library
 
 ## Gotchas
 - Objective functions must be picklable (top-level classes), because they are sent to pool workers. Calls that create a pool must sit under `if __name__ == '__main__':`.
-- `HarmonySearchResults` is a namedtuple. Adding a field means changing the namedtuple, the 4-tuple returned by `HarmonySearch.run()`, the aggregation loops in **both** `harmony_search` and `harmony_search_serial` (duplicated code), and the field list in `README.md`.
+- `HarmonySearchResults` is a namedtuple. Adding a field means changing the namedtuple, the 4-tuple returned by `HarmonySearch.run()`, `_combine_results()` (shared by `harmony_search` and `harmony_search_serial`), and the field list in `README.md`.
 - Every best/worst comparison branches on `maximize()`. Keep both directions correct when you edit.
 - Harmony memory holds `(harmony, fitness)` tuples. The history is deep-copied every `hms` improvisations; this fixed a shallow-copy bug in 1.4.3, so don't undo it.
 - The global `terminating = Event()` and the `KeyboardInterrupt` handling in `worker()` are intentional. Don't remove them.

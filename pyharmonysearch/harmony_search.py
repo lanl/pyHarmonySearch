@@ -56,26 +56,9 @@ def harmony_search(objective_function, num_processes, num_iterations, initial_ha
                         for _ in range(num_iterations)]
         pool.close()  # no more tasks will be submitted to the pool
         pool.join()  # wait for all tasks to finish before moving on
-        end = datetime.now()
-        elapsed_time = end - start
-
-        # find best harmony from all iterations
-        best_harmony = None
-        best_fitness = float('-inf') if objective_function.maximize() else float('+inf')
-        harmony_memories = list()
-        harmony_histories = list()
-        for result in pool_results:
-            # multiprocessing.pool.AsyncResult is returned for each process, so call get() to pull out the value
-            harmony, fitness, harmony_memory, harmony_history = result.get()
-            if ((objective_function.maximize() and fitness > best_fitness) or
-                    (not objective_function.maximize() and fitness < best_fitness)):
-                best_harmony = harmony
-                best_fitness = fitness
-            harmony_memories.append(harmony_memory)
-            harmony_histories.append(harmony_history)
-
-        return HarmonySearchResults(elapsed_time=elapsed_time, best_harmony=best_harmony, best_fitness=best_fitness,
-                                    harmony_memories=harmony_memories, harmony_histories=harmony_histories)
+        elapsed_time = datetime.now() - start
+        # multiprocessing.pool.AsyncResult is returned for each process, so call get() to pull out the value
+        return _combine_results(objective_function, elapsed_time, [result.get() for result in pool_results])
 
 
 def harmony_search_serial(objective_function, num_iterations, initial_harmonies=None):
@@ -87,25 +70,33 @@ def harmony_search_serial(objective_function, num_iterations, initial_harmonies=
     terminating.clear()  # a KeyboardInterrupt during a previous search may have left this set
     start = datetime.now()
     results = [worker(objective_function, initial_harmonies) for _ in range(num_iterations)]
-    end = datetime.now()
-    elapsed_time = end - start
+    elapsed_time = datetime.now() - start
+    return _combine_results(objective_function, elapsed_time, results)
 
-    # find best harmony from all iterations
+
+def _combine_results(objective_function, elapsed_time, results):
+    """
+        Combine the (harmony, fitness, harmony_memory, harmony_history) tuple returned by each iteration into a single
+        HarmonySearchResults, whose best harmony is the best across all iterations.
+    """
+    best_harmony, best_fitness = _best(((harmony, fitness) for harmony, fitness, _, _ in results),
+                                       objective_function.maximize())
+    return HarmonySearchResults(elapsed_time=elapsed_time, best_harmony=best_harmony, best_fitness=best_fitness,
+                                harmony_memories=[result[2] for result in results],
+                                harmony_histories=[result[3] for result in results])
+
+
+def _best(harmonies, maximize):
+    """
+        Return the best (harmony, fitness) pair, keeping the first on ties, or (None, -inf/+inf) if there are none.
+    """
     best_harmony = None
-    best_fitness = float('-inf') if objective_function.maximize() else float('+inf')
-    harmony_memories = list()
-    harmony_histories = list()
-    for result in results:
-        harmony, fitness, harmony_memory, harmony_history = result
-        if ((objective_function.maximize() and fitness > best_fitness) or
-                (not objective_function.maximize() and fitness < best_fitness)):
+    best_fitness = float('-inf') if maximize else float('+inf')
+    for harmony, fitness in harmonies:
+        if (maximize and fitness > best_fitness) or (not maximize and fitness < best_fitness):
             best_harmony = harmony
             best_fitness = fitness
-        harmony_memories.append(harmony_memory)
-        harmony_histories.append(harmony_history)
-
-    return HarmonySearchResults(elapsed_time=elapsed_time, best_harmony=best_harmony, best_fitness=best_fitness,
-                                harmony_memories=harmony_memories, harmony_histories=harmony_histories)
+    return best_harmony, best_fitness
 
 
 def _init_worker(event):
@@ -189,13 +180,7 @@ class HarmonySearch:
                 self._harmony_history.append(harmony_list)
 
         # return best harmony
-        best_harmony = None
-        best_fitness = float('-inf') if self._obj_fun.maximize() else float('+inf')
-        for harmony, fitness in self._harmony_memory:
-            if ((self._obj_fun.maximize() and fitness > best_fitness) or
-                    (not self._obj_fun.maximize() and fitness < best_fitness)):
-                best_harmony = harmony
-                best_fitness = fitness
+        best_harmony, best_fitness = _best(self._harmony_memory, self._obj_fun.maximize())
         return best_harmony, best_fitness, self._harmony_memory, self._harmony_history
 
     def _initialize(self, initial_harmonies=None):

@@ -144,7 +144,7 @@ def fake_pool(monkeypatch):
 
 @pytest.fixture(params=['harmony_search', 'harmony_search_serial'])
 def search(request, fake_pool):
-    """Both entry points duplicate the aggregation logic, so every aggregation test runs against each."""
+    """Every aggregation test runs against both entry points, so each is checked to combine results correctly."""
     if request.param == 'harmony_search':
         fake_pool()
         return lambda objective, num_iterations, initial_harmonies=None: hs_module.harmony_search(
