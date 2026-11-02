@@ -117,3 +117,73 @@ class SumObjective(ObjectiveFunctionInterface):
 
     def maximize(self):
         return self._maximize
+
+
+class SphereObjective(ObjectiveFunctionInterface):
+
+    """
+        Minimize sum((x_i - c_i)^2) over [lower, upper]^n, so the optimum (fitness 0 at center) is inside the bounds.
+        With maximize=True the fitness is negated, which puts the maximum at the same point.
+    """
+
+    def __init__(self, center=(1.0, -2.0, 3.0), *, lower=-10.0, upper=10.0, maximize=False, hms=10, max_imp=1000,
+                 hmcr=0.9, par=0.3, mpap=0.1, seed=0):
+        self.center = list(center)
+        self.lower = lower
+        self.upper = upper
+        self._maximize = maximize
+        self.hms = hms
+        self.max_imp = max_imp
+        self.hmcr = hmcr
+        self.par = par
+        self.mpap = mpap
+        self.seed = seed
+
+    def get_fitness(self, vector):
+        distance = sum((x - c) ** 2 for x, c in zip(vector, self.center, strict=True))
+        return -distance if self._maximize else distance
+
+    def get_value(self, i, j=None):
+        return random.uniform(self.lower, self.upper)
+
+    def get_lower_bound(self, i):
+        return self.lower
+
+    def get_upper_bound(self, i):
+        return self.upper
+
+    def is_variable(self, i):
+        return True
+
+    def is_discrete(self, i):
+        return False
+
+    def get_num_parameters(self):
+        return len(self.center)
+
+    def use_random_seed(self):
+        return True
+
+    def get_random_seed(self):
+        return self.seed
+
+    def get_max_imp(self):
+        return self.max_imp
+
+    def get_hmcr(self):
+        return self.hmcr
+
+    def get_par(self):
+        return self.par
+
+    def get_hms(self):
+        return self.hms
+
+    def get_mpai(self):
+        return 0
+
+    def get_mpap(self):
+        return self.mpap
+
+    def maximize(self):
+        return self._maximize

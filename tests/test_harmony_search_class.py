@@ -26,7 +26,7 @@ from types import SimpleNamespace
 from unittest import mock
 
 import pytest
-from helpers import SumObjective
+from helpers import SphereObjective, SumObjective
 
 from pyharmonysearch import HarmonySearch
 
@@ -106,6 +106,16 @@ def test_run_optimizes_within_bounds(maximize, near_optimal, best_discrete):
         assert objective.lower <= harmony[0] <= objective.upper
         assert harmony[1] in objective.values
         assert harmony[2] == objective.fixed
+
+
+@pytest.mark.parametrize('maximize', [True, False], ids=['maximize', 'minimize'])
+def test_run_converges_to_interior_optimum(maximize):
+    objective = SphereObjective(center=(1.0, -2.0, 3.0), maximize=maximize, max_imp=1000, seed=0)
+
+    best_harmony, best_fitness, _, _ = HarmonySearch(objective).run()
+
+    assert best_harmony == pytest.approx(objective.center, abs=0.25)
+    assert abs(best_fitness) < 0.05
 
 
 @pytest.mark.parametrize(('hms', 'max_imp', 'expected_generations'), [

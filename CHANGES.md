@@ -12,7 +12,8 @@
 * Make the initial-harmonies example reproducible by seeding before generating the initial harmonies.
 * Fix the 5-D example crashing on a machine with a single CPU.
 * Deduplicate the result handling shared by `harmony_search()` and `harmony_search_serial()` (no behavior change).
-* Expand the README: tuning parameters, results, multiprocessing requirements, and `harmony_search_serial()`.
+* Add three examples drawn from the optimization literature: pressure vessel design (mixed discrete/continuous variables with constraints), the N-D Rastrigin function (many local minima, with convergence from `harmony_histories`), and a 0/1 knapsack problem (binary variables with a capacity constraint).
+* Add a test that runs every example with a reduced improvisation budget, and a convergence test on a problem whose optimum is inside the bounds.
 
 ## 1.4.4 (2022-08-01)
 * Drop Python 3.6 support and below (EOL).

@@ -8,7 +8,7 @@ Pure-Python harmony search optimizer. The package uses only the standard library
   - `harmony_search_serial()` does the same without a pool. It is **not** exported from `__init__.py`, so import it from `pyharmonysearch.harmony_search`.
   - `worker()` is the module-level function the pool pickles.
 - `pyharmonysearch/objective_function_interface.py`: an abstract-by-convention base class. Its methods raise `NotImplementedError`; it does not use `abc`. Users subclass it to define the problem and **all** tuning params (`hms`, `hmcr`, `par`, `mpap`, `mpai`, `max_imp`, seed, `maximize`). `harmony_search()` takes no parameters beyond the process/iteration counts and `initial_harmonies`.
-- `examples/*.py` and `README.md`: the usage docs.
+- `examples/*.py` and `README.md`: the usage docs. When you add an example, add a row to the matching table in the README's EXAMPLES section, plus a REFERENCES entry if it comes from the literature.
 
 ## Gotchas
 - Objective functions must be picklable (top-level classes), because they are sent to pool workers. Calls that create a pool must sit under `if __name__ == '__main__':`.
@@ -30,7 +30,8 @@ Pure-Python harmony search optimizer. The package uses only the standard library
 - The global `terminating` Event persists across calls in a process; the autouse fixture in `tests/test_api.py` clears it.
 - Ruff config (rules, 120 cols, single quotes) is in `pyproject.toml`. There's no `ruff format` check.
 - CI (`.github/workflows/tests.yml`) runs on Ubuntu only, against every maintained CPython.
-- To smoke-test, run the examples from `examples/` with the repo root on `PYTHONPATH`. Use `PYTHONPATH=.. python 2-D_continuous_seed.py`. That one is fast and seeded, with 1 process and 1 iteration. Expect roughly 4.0 best fitness. Several of the other examples use every CPU and take tens of seconds to minutes.
+- `tests/test_examples.py` imports every `examples/*.py` without running `__main__` and runs it briefly. Each example must define a top-level `ObjectiveFunction` with a no-argument constructor and a `_max_imp` attribute (the test shrinks it), and keep its search under `if __name__ == '__main__':`.
+- To check real output, run the examples from `examples/` with the repo root on `PYTHONPATH`. Use `PYTHONPATH=.. python 2-D_continuous_seed.py`. That one is fast and seeded, with 1 process and 1 iteration. Expect roughly 4.0 best fitness. Several of the other examples use every CPU and take tens of seconds to minutes.
 
 ## Releases
 - When you bump the version, update `version` in `pyproject.toml` and add an entry to `CHANGES.md`. If you add or drop a supported Python version, also update `requires-python`, the classifiers, the CI matrix, and the REQUIREMENTS line in `README.md`.
