@@ -180,8 +180,9 @@ class ObjectiveFunctionInterface:
 
     def get_max_imp(self):
         """
-            Return the maximum number of improvisations. This represents the stopping criterion (i.e., the number of
-            fitness evaluations HS performs until search stops).
+            Return the maximum number of improvisations. This represents the stopping criterion. Each improvisation
+            costs one fitness evaluation, and filling the initial harmony memory costs another hms, so each search
+            makes hms + max_imp fitness evaluations in total.
         """
         raise NotImplementedError(inspect.stack()[0][3])
 
@@ -195,7 +196,8 @@ class ObjectiveFunctionInterface:
     def get_par(self):
         """
             Return the pitch adjusting rate. This represents how often pitch adjustment will occur if memory
-            consideration has already been done.
+            consideration has already been done. A discrete value that is pitch adjusted always changes (unless it has
+            only one possible value or mpai < 1).
         """
         raise NotImplementedError(inspect.stack()[0][3])
 
@@ -208,15 +210,17 @@ class ObjectiveFunctionInterface:
 
     def get_mpai(self):
         """
-            Return the maximum pitch adjustment index. This determines the range from which pitch adjustment may occur
-            for discrete variables. Also known as discrete bandwidth.
+            Return the maximum pitch adjustment index. A discrete value that is pitch adjusted moves by 1 to mpai
+            indices. Also known as discrete bandwidth.
         """
         raise NotImplementedError(inspect.stack()[0][3])
 
     def get_mpap(self):
         """
-            Return the maximum pitch adjustment proportion. This determines the range from which pitch adjustment may
-            occur for continuous variables. Also known as continuous bandwidth.
+            Return the maximum pitch adjustment proportion. A continuous value that is pitch adjusted moves toward a
+            randomly chosen bound by up to this proportion of its distance to that bound. Keep it in [0, 1]; values
+            above 1 can move the value out of bounds. This is the package's own continuous operator, not the
+            fixed-width bandwidth used in later HS papers.
         """
         raise NotImplementedError(inspect.stack()[0][3])
 

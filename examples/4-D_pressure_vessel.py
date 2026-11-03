@@ -81,8 +81,8 @@ class ObjectiveFunction(ObjectiveFunctionInterface):
         # define all input parameters
         self._maximize = False  # do we maximize or minimize?
         self._max_imp = 10000  # maximum number of improvisations
-        self._hms = 30  # harmony memory size
-        self._hmcr = 0.9  # harmony memory considering rate
+        self._hms = 10  # harmony memory size
+        self._hmcr = 0.8  # harmony memory considering rate
         self._par = 0.4  # pitch adjusting rate
         self._mpap = 0.02  # maximum pitch adjustment proportion (new parameter defined in pitch_adjustment()) - used for continuous variables only
         self._mpai = 2  # maximum pitch adjustment index (also defined in pitch_adjustment()) - used for discrete variables only

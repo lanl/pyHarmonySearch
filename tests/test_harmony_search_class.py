@@ -151,6 +151,16 @@ def test_run_with_seed_is_reproducible():
     assert run(42) != run(43)
 
 
+def test_run_copies_initial_harmonies():
+    initial_harmonies = [[1], [5], [3]]
+
+    best_harmony, _, memory, _ = HarmonySearch(SumObjective(hms=3, max_imp=0)).run(initial_harmonies=initial_harmonies)
+    best_harmony.append(99)
+
+    assert initial_harmonies == [[1], [5], [3]]
+    assert all(harmony is not original for (harmony, _), original in zip(memory, initial_harmonies, strict=True))
+
+
 @pytest.mark.parametrize(('initial_harmonies', 'message'), [
     ([[1], [2]], 'does not equal to the harmony memory size'),
     ([[1], [2], [3, 4]], 'Number of parameters in initial harmonies'),
@@ -187,24 +197,35 @@ def test_pitch_adjustment_leaves_fixed_parameter_alone(fake_random):
 DOWN, UP = 0.1, 0.9
 
 
-# The step drawn is always the largest allowed, so the expected bounds show the step is clamped to the value range.
+# direction is None where only one direction has room, so no coin flip is drawn. The step drawn is always the largest
+# allowed, so the expected bounds show the step is clamped to the value range and never zero.
 @pytest.mark.parametrize(('start', 'direction', 'expected_bounds', 'expected'), [
-    (2, DOWN, (0, 2), 0),
-    (1, DOWN, (0, 1), 0),
-    (0, DOWN, (0, 0), 0),
-    (2, UP, (0, 2), 4),
-    (3, UP, (0, 1), 4),
-    (4, UP, (0, 0), 4),
+    (2, DOWN, (1, 2), 0),
+    (1, DOWN, (1, 1), 0),
+    (0, None, (1, 2), 2),  # the first value can only move up
+    (2, UP, (1, 2), 4),
+    (3, UP, (1, 1), 4),
+    (4, None, (1, 2), 2),  # the last value can only move down
 ])
-def test_discrete_pitch_adjustment_stays_within_values(fake_random, start, direction, expected_bounds, expected):
+def test_discrete_pitch_adjustment_always_moves_within_values(fake_random, start, direction, expected_bounds, expected):
     objective = SumObjective(('discrete',), values=[10, 20, 30, 40, 50], mpai=2)
-    randint_bounds = fake_random(randoms=[direction], randints=[expected_bounds[1]])
+    randint_bounds = fake_random(randoms=[] if direction is None else [direction], randints=[expected_bounds[1]])
     harmony = [objective.values[start]]
 
     make_search(objective)._pitch_adjustment(harmony, 0)
 
     assert randint_bounds == [expected_bounds]
     assert harmony == [objective.values[expected]]
+
+
+@pytest.mark.parametrize(('values', 'mpai'), [([10], 2), ([10, 20, 30], 0)], ids=['single value', 'mpai 0'])
+def test_discrete_pitch_adjustment_without_room_leaves_value_alone(fake_random, values, mpai):
+    fake_random()  # any random draw would raise StopIteration
+    harmony = [10]
+
+    make_search(SumObjective(('discrete',), values=values, mpai=mpai))._pitch_adjustment(harmony, 0)
+
+    assert harmony == [10]
 
 
 @pytest.mark.parametrize(('direction', 'r', 'mpap', 'expected'), [

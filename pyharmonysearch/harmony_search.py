@@ -212,9 +212,9 @@ class HarmonySearch:
                     self._random_selection(harmony, j)
                 initial_harmonies.append(harmony)
 
-        for i in range(0, self._obj_fun.get_hms()):
-            fitness = self._obj_fun.get_fitness(initial_harmonies[i])
-            self._harmony_memory.append((initial_harmonies[i], fitness))
+        for harmony in initial_harmonies:
+            harmony = list(harmony)  # copy, so the results never share rows with the caller's list or other runs
+            self._harmony_memory.append((harmony, self._obj_fun.get_fitness(harmony)))
 
         harmony_list = {'gen': 0, 'harmonies': copy.deepcopy(self._harmony_memory)}
         self._harmony_history.append(harmony_list)
@@ -238,27 +238,32 @@ class HarmonySearch:
             If variable, randomly adjust the pitch up or down by some amount. This is the only place in the algorithm
             where there is an explicit difference between continuous and discrete variables.
 
-            The probability of adjusting the pitch either up or down is fixed at 0.5. The maximum pitch adjustment
-            proportion (mpap) and maximum pitch adjustment index (mpai) determine the maximum amount the pitch may
-            change for continuous and discrete variables, respectively.
+            The probability of adjusting the pitch either up or down is 0.5, except that a discrete pitch at its first
+            or last value always moves inward. The maximum pitch adjustment proportion (mpap) and maximum pitch
+            adjustment index (mpai) determine the maximum amount the pitch may change for continuous and discrete
+            variables, respectively.
 
-            For example, suppose that it is decided via coin flip that the pitch will be adjusted down. Also suppose
-            that mpap is set to 0.25. This means that the maximum value the pitch can be dropped will be 25% of the
-            difference between the lower bound and the current pitch. mpai functions similarly, only it relies on
-            indices of the possible values instead.
+            A discrete pitch always moves to a different value, by 1 to mpai indices; with mpai = 1 this is the original
+            paper's move to a neighboring value. It stays unchanged only when mpai < 1 or there is a single value.
+
+            The continuous adjustment is this package's own operator; the original paper defines no continuous
+            formula. Suppose that it is decided via coin flip that the pitch will be adjusted down, and that mpap is
+            0.25. The pitch then drops by up to 25% of the difference between the current pitch and the lower bound.
+            This keeps the pitch within the bounds as long as 0 <= mpap <= 1.
         """
         if self._obj_fun.is_variable(i):
             if self._obj_fun.is_discrete(i):
                 current_index = self._obj_fun.get_index(i, harmony[i])
                 mpai = self._obj_fun.get_mpai()
+                max_down = min(mpai, current_index)
+                max_up = min(mpai, self._obj_fun.get_num_discrete_values(i) - current_index - 1)
                 # discrete variable
-                if random.random() < 0.5:
+                if max_down > 0 and (max_up <= 0 or random.random() < 0.5):
                     # adjust pitch down
-                    harmony[i] = self._obj_fun.get_value(i, current_index - random.randint(0, min(mpai, current_index)))
-                else:
+                    harmony[i] = self._obj_fun.get_value(i, current_index - random.randint(1, max_down))
+                elif max_up > 0:
                     # adjust pitch up
-                    max_up = min(mpai, self._obj_fun.get_num_discrete_values(i) - current_index - 1)
-                    harmony[i] = self._obj_fun.get_value(i, current_index + random.randint(0, max_up))
+                    harmony[i] = self._obj_fun.get_value(i, current_index + random.randint(1, max_up))
             else:
                 # continuous variable
                 mpap = self._obj_fun.get_mpap()
@@ -272,7 +277,8 @@ class HarmonySearch:
     def _update_harmony_memory(self, considered_harmony, considered_fitness):
         """
             Update the harmony memory if necessary with the given harmony. If the given harmony is better than the worst
-            harmony in memory, replace it. This function doesn't allow duplicate harmonies in memory.
+            harmony in memory, replace it. This function doesn't admit a harmony whose (harmony, fitness) pair is
+            already in memory, which keeps memory diverse; the original paper doesn't address duplicates.
         """
         if (considered_harmony, considered_fitness) not in self._harmony_memory:
             worst_index = None

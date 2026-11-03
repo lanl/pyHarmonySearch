@@ -14,6 +14,9 @@
 * Deduplicate the result handling shared by `harmony_search()` and `harmony_search_serial()` (no behavior change).
 * Add three examples drawn from the optimization literature: pressure vessel design (mixed discrete/continuous variables with constraints), the N-D Rastrigin function (many local minima, with convergence from `harmony_histories`), and a 0/1 knapsack problem (binary variables with a capacity constraint).
 * Add a test that runs every example with a reduced improvisation budget, and a convergence test on a problem whose optimum is inside the bounds.
+* Discrete pitch adjustment now always moves to a different value (with `mpai = 1`, a neighboring value, as in the original paper). It previously had a chance of drawing a step of zero (1 in `mpai + 1` for an interior value, and half the time or more at the first or last value), so the effective pitch adjusting rate was below `par`: as low as half of `par`, or a quarter at the first or last value, when `mpai` is 1. At the first or last value it now moves inward. Results for problems with discrete variables, including seeded runs, will differ from earlier versions.
+* Copy `initial_harmonies` into the harmony memory, so results no longer share lists with the caller or with each other.
+* Clarify in the docstrings that each search makes `hms + max_imp` fitness evaluations, that `mpap` should be in [0, 1], and that continuous pitch adjustment and duplicate rejection are this package's own choices.
 
 ## 1.4.4 (2022-08-01)
 * Drop Python 3.6 support and below (EOL).

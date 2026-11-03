@@ -38,9 +38,9 @@ You use this code in three steps:
     * `hms` (harmony memory size): how many harmonies are kept in memory.
     * `hmcr` (harmony memory considering rate): the probability of taking each value from memory rather than choosing it at random.
     * `par` (pitch adjusting rate): the probability of adjusting a value taken from memory.
-    * `mpap` (maximum pitch adjustment proportion): the most a continuous value can move, as a proportion of its distance to the bound.
-    * `mpai` (maximum pitch adjustment index): the most a discrete value can move, in indices.
-    * `max_imp` (maximum improvisations): how many new harmonies to generate. This is the stopping criterion.
+    * `mpap` (maximum pitch adjustment proportion): the most a continuous value can move, as a proportion of its distance to the bound. Keep it between 0 and 1 so values stay within their bounds.
+    * `mpai` (maximum pitch adjustment index): the most a discrete value can move, in indices. An adjusted discrete value always moves by at least one index, unless `mpai` is less than 1 or there is only one possible value.
+    * `max_imp` (maximum improvisations): how many new harmonies to generate. This is the stopping criterion. Each search makes `hms + max_imp` fitness evaluations, counting the initial harmony memory.
     * `maximize()` chooses maximization or minimization, and an optional random seed makes runs reproducible.
 1. Run HS with `harmony_search(objective_function, num_processes, num_iterations, initial_harmonies=None)`. If given, `initial_harmonies` must contain exactly `hms` harmonies, each with one value per parameter; otherwise a `ValueError` is raised.
 
@@ -137,7 +137,7 @@ The problems in the [literature examples](#problems-from-the-literature) come fr
 * H. Mühlenbein, M. Schomisch, and J. Born, "The parallel genetic algorithm as function optimizer," Parallel Computing, vol. 17, no. 6–7, pp. 619–632, Sep. 1991. [doi:10.1016/S0167-8191(05)80052-3](https://doi.org/10.1016/S0167-8191(05)80052-3) (generalized Rastrigin function)
 * J. Burkardt, [KNAPSACK_01: Data for the 01 Knapsack Problem](https://people.sc.fsu.edu/~jburkardt/datasets/knapsack_01/knapsack_01.html) (instance P07, from Kreher and Stinson)
 
-Some modifications and improvements have been suggested to the original algorithm. None of these are implemented here. This package only implements the original algorithm.
+Some modifications and improvements have been suggested to the original algorithm. None of these are implemented here. This package implements the original algorithm's structure (harmony memory, memory consideration, pitch adjustment, and replacing the worst harmony), with some choices of its own where the 2001 paper is silent or simpler: discrete pitch adjustment can move up to `mpai` values (the paper moves to a neighboring value) and moves inward from the first or last value; continuous pitch adjustment moves a value by up to `mpap` of its distance to a bound; and a new harmony identical to one already in memory is not added again.
 
 * Z. W. Geem, "Improved Harmony Search from Ensemble of Music Players", in Knowledge-Based Intelligent Information and Engineering Systems, B. Gabrys, R. Howlett, and L. Jain, Eds. Springer Berlin / Heidelberg, 2006, pp. 86-93.
 * M. Mahdavi, M. Fesanghary, and E. Damangir, "An improved harmony search algorithm for solving optimization problems", Applied Mathematics and Computation, vol. 188, no. 2, pp. 1567-1579, May 2007.
@@ -145,9 +145,8 @@ Some modifications and improvements have been suggested to the original algorith
 * Z. W. Geem and K.-B. Sim, "Parameter-setting-free harmony search algorithm," Applied Mathematics and Computation, vol. 217, no. 8, pp. 3881–3889, Dec. 2010.
 
 ## DIFFERENCES
-Python optimization packages that implement HS:
+Another Python optimization package that implements HS:
 
-* [pyOpt](https://github.com/madebr/pyOpt)
 * [pygmo](https://github.com/esa/pygmo2)
 
 pyHarmonySearch differs from other optimization packages in that it relies on no third-party software. It is simple and easy-to-use standalone Python code. The primary reason I developed this was because I got tired of having to compile and maintain my own third-party packages on a machine running several-year-old software for which I have only user-level access. SciPy is particularly nasty to build, and many scientific packages rely on it. I skirted this issue by implementing HS myself from scratch.
