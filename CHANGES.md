@@ -1,6 +1,6 @@
 # Changes
 
-## 1.5.0 (unreleased)
+## 1.5.0 (2026-11-02)
 * Drop Python 3.10 support and below (EOL).
 * Add Python 3.11 through 3.15 classifiers and test against them in CI.
 * Move packaging from `setup.py` to `pyproject.toml` (hatchling).
